@@ -1,0 +1,109 @@
+import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useLocation, Link, useNavigate } from 'react-router-dom'
+import { useApp } from '../context/AppContext'
+import { useAuth } from '../context/AuthContext'
+
+const navItems = [
+  { path: '/', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6', key: 'dashboard' },
+  { path: '/grades', icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z', key: 'grades' },
+  { path: '/courses', icon: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253', key: 'courses' },
+  { path: '/lectures', icon: 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z', key: 'lectures' },
+  { path: '/semesters', icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4', key: 'semesters' },
+  { path: '/news', icon: 'M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z', key: 'news' },
+]
+
+export default function Layout({ children }) {
+  const { t } = useTranslation()
+  const location = useLocation()
+  const navigate = useNavigate()
+  const { student, lang, toggleLanguage, dir } = useApp()
+  const { logout } = useAuth()
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+
+  return (
+    <div className="min-h-screen flex flex-col" dir={dir}>
+      <header className="bg-primary-500 text-white shadow-lg sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center gap-3">
+              <button className="lg:hidden p-2 rounded-lg hover:bg-primary-600" onClick={() => setSidebarOpen(!sidebarOpen)}>
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={sidebarOpen ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16M4 18h16'} />
+                </svg>
+              </button>
+              <div className="w-10 h-10 bg-accent-500 rounded-lg flex items-center justify-center font-bold text-primary-900 text-lg">
+                {lang === 'ar' ? 'م' : 'S'}
+              </div>
+              <div className="hidden sm:block">
+                <h1 className="font-bold text-lg leading-tight">{t('header.instituteShort')}</h1>
+                <p className="text-xs text-primary-200">{t('header.studentPortal')}</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <button onClick={toggleLanguage} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary-600 hover:bg-primary-700 text-sm font-medium transition-colors">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                {lang === 'en' ? 'العربية' : 'English'}
+              </button>
+              <button onClick={() => { logout(); navigate('/login') }} className="p-2 rounded-lg hover:bg-primary-600 transition-colors" title="Logout">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+              </button>
+              {student && (
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-full bg-primary-400 flex items-center justify-center text-sm font-bold">
+                    {lang === 'ar' ? (student.nameAr || '?').charAt(0) : (student.nameEn || '?').charAt(0)}
+                  </div>
+                  <span className="hidden md:block text-sm font-medium">{lang === 'ar' ? student.nameAr : student.nameEn}</span>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div className="flex flex-1 max-w-7xl mx-auto w-full">
+        <aside className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 fixed lg:sticky top-16 left-0 h-[calc(100vh-4rem)] w-64 bg-white border-r border-gray-200 shadow-sm z-40 transition-transform duration-200 overflow-y-auto`}>
+          <nav className="p-3 space-y-1">
+            {navItems.map((item) => {
+              const isActive = location.pathname === item.path
+              return (
+                <Link key={item.path} to={item.path} onClick={() => setSidebarOpen(false)}
+                  className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors
+                    ${isActive ? 'bg-primary-50 text-primary-600 border-r-2 border-primary-500' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}`}>
+                  <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={item.icon} />
+                  </svg>
+                  <span>{t(`nav.${item.key}`)}</span>
+                </Link>
+              )
+            })}
+            <div className="pt-4 mt-4 border-t border-gray-200">
+              <button onClick={() => { logout(); navigate('/login') }}
+                className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-gray-500 hover:bg-red-50 hover:text-red-600 w-full transition-colors">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                <span>{lang === 'ar' ? 'تسجيل الخروج' : 'Sign Out'}</span>
+              </button>
+            </div>
+          </nav>
+        </aside>
+
+        {sidebarOpen && <div className="fixed inset-0 bg-black/30 z-30 lg:hidden" onClick={() => setSidebarOpen(false)} />}
+
+        <main className="flex-1 p-4 md:p-6 lg:p-8 min-h-[calc(100vh-4rem)] overflow-x-hidden">
+          {children}
+        </main>
+      </div>
+
+      <footer className="bg-white border-t border-gray-200 py-4 text-center text-sm text-gray-500">
+        <p>&copy; {new Date().getFullYear()} {t('header.instituteName')} — {t('header.studentPortal')}</p>
+      </footer>
+    </div>
+  )
+}

@@ -1,0 +1,80 @@
+[
+  {
+    "id": 1,
+    "titleEn": "Registration for Semester 5 Now Open",
+    "titleAr": "التسجيل للفصل الخامس مفتوح الآن",
+    "summaryEn": "Course registration for the Fall 2025 semester is now open. Please visit the courses page to select your subjects.",
+    "summaryAr": "التسجيل في المقررات للفصل الخريفي 2025 مفتوح الآن. يرجى زيارة صفحة المقررات لاختيار موادكم.",
+    "contentEn": "Dear students, registration for Semester 5 of the academic year 2024-2025 is now open. You can register for your courses through the student portal until October 15th. Please consult with your academic advisor before finalizing your selection.",
+    "contentAr": "أيها الطلاب، التسجيل للفصل الخامس من العام الجامعي 2024-2025 مفتوح الآن. يمكنكم التسجيل في مقرراتكم عبر بوابة الطالب حتى 15 أكتوبر. يرجى استشارة المرشد الأكاديمي قبل اختيار المقررات.",
+    "category": "announcement",
+    "date": "2025-09-01",
+    "image": null,
+    "author": "Academic Affairs"
+  },
+  {
+    "id": 2,
+    "titleEn": "Annual Science & Technology Fair",
+    "titleAr": "المعرض السنوي للعلوم و التكنولوجيا",
+    "summaryEn": "SITS is hosting its annual Science & Technology Fair. Students are encouraged to showcase their projects.",
+    "summaryAr": "ينظم المعهد معرضه السنوي للعلوم و التكنولوجيا. يُشجع الطلاب على عرض مشاريعهم.",
+    "contentEn": "The Sabratha Institute of Technical Sciences is proud to announce its 3rd Annual Science and Technology Fair, to be held on November 20-22, 2025. Students from all departments are invited to submit their innovative projects. Prizes will be awarded for the top three projects in each category.",
+    "contentAr": "يعلن معهد صبراتة للتقنية و العلوم التطبيقية عن معرضه السنوي الثالث للعلوم و التكنولوجيا، الذي سيقام في 20-22 نوفمبر 2025. الطلاب من جميع الأقسام مدعوون لتقديم مشاريعهم المبتكرة. سيتم منح جوائز لأفضل ثلاثة مشاريع في كل فئة.",
+    "category": "event",
+    "date": "2025-08-28",
+    "image": null,
+    "author": "Student Affairs"
+  },
+  {
+    "id": 3,
+    "titleEn": "New Partnership with Libyan Tech Companies",
+    "titleAr": "شراكة جديدة مع شركات التقنية الليبية",
+    "summaryEn": "SITS has signed MoUs with leading Libyan technology companies for student training and employment.",
+    "summaryAr": "وقع المعهد مذكرات تفاهم مع شركات تقنية ليبية رائدة لتدريب و توظيف الطلاب.",
+    "contentEn": "We are pleased to announce that SITS has signed memoranda of understanding with three leading Libyan technology companies. This partnership will provide students with internship opportunities, industry training, and potential employment after graduation.",
+    "contentAr": "يسرنا الإعلان عن توقيع المعهد مذكرات تفاهم مع ثلاث شركات تقنية ليبية رائدة. ستوفر هذه الشراكة فرص تدريب للطلاب و تأهيل مهني و فرص توظيف محتملة بعد التخرج.",
+    "category": "announcement",
+    "date": "2025-08-20",
+    "image": null,
+    "author": "Dean's Office"
+  },
+  {
+    "id": 4,
+    "titleEn": "Midterm Exam Schedule Released",
+    "titleAr": "جدول الامتحانات النصفية",
+    "summaryEn": "The midterm exam schedule for Semester 5 has been published. Check the schedule and prepare accordingly.",
+    "summaryAr": "تم نشر جدول الامتحانات النصفية للفصل الخامس. يرجى الاطلاع على الجدول و الاستعداد.",
+    "contentEn": "The midterm examination schedule for Semester 5 (2024-2025) is now available. Exams will begin on October 28th and run through November 7th. Please check the notice board for your specific exam dates and locations.",
+    "contentAr": "جدول الامتحانات النصفية للفصل الخامس (2024-2025) متاح الآن. ستبدأ الامتحانات في 28 أكتوبر و تستمر حتى 7 نوفمبر. يرجى مراجعة لوحة الإعلانات لمعرفة تواريخ و أماكن الامتحانات.",
+    "category": "announcement",
+    "date": "2025-08-15",
+    "image": null,
+    "author": "Examinations Committee"
+  },
+  {
+    "id": 5,
+    "titleEn": "Guest Lecture: AI in Healthcare",
+    "titleAr": "محاضرة ضيف: الذكاء الاصطناعي في الرعاية الصحية",
+    "summaryEn": "A guest lecture by Dr. Hassan Al-Mahdi on the applications of artificial intelligence in modern healthcare.",
+    "summaryAr": "محاضرة ضيف يلقيها د. حسن المهدي حول تطبيقات الذكاء الاصطناعي في الرعاية الصحية الحديثة.",
+    "contentEn": "The Computer Engineering Department invites you to a guest lecture titled 'Artificial Intelligence in Healthcare: Current Trends and Future Directions' by Dr. Hassan Al-Mahdi, a visiting researcher from the University of Tripoli. The lecture will take place on September 10th at 11:00 AM in Hall A.",
+    "contentAr": "يدعوكم قسم هندسة الحاسوب إلى محاضرة ضيف بعنوان 'الذكاء الاصطناعي في الرعاية الصحية: الاتجاهات الحالية و التوجهات المستقبلية' يلقيها د. حسن المهدي، باحث زائر من جامعة طرابلس. تقام المحاضرة في 10 سبتمبر الساعة 11:00 صباحاً في القاعة A.",
+    "category": "event",
+    "date": "2025-08-10",
+    "image": null,
+    "author": "Computer Engineering Dept."
+  },
+  {
+    "id": 6,
+    "titleEn": "Library Extended Hours During Exams",
+    "titleAr": "ساعات العمل الموسعة للمكتبة أثناء الامتحانات",
+    "summaryEn": "The institute library will remain open until 8 PM during the exam period.",
+    "summaryAr": "ستظل مكتبة المعهد مفتوحة حتى الساعة 8 مساءً خلال فترة الامتحانات.",
+    "contentEn": "To support students during the upcoming midterm exams, the institute library will extend its operating hours. Starting October 15th, the library will be open from 8:00 AM to 8:00 PM (Sunday through Thursday). All resources including computer labs will be available.",
+    "contentAr": "دعماً للطلاب خلال الامتحانات النصفية القادمة، ستمدد مكتبة المعهد ساعات عملها. ابتداءً من 15 أكتوبر، ستكون المكتبة مفتوحة من 8:00 صباحاً إلى 8:00 مساءً (الأحد إلى الخميس). جميع الموارد بما في ذلك مختبرات الحاسوب ستكون متاحة.",
+    "category": "announcement",
+    "date": "2025-08-05",
+    "image": null,
+    "author": "Library Administration"
+  }
+]

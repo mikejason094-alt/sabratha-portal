@@ -1,0 +1,122 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "grades": "My Grades",
+    "courses": "Courses",
+    "lectures": "Lectures",
+    "semesters": "Semesters",
+    "news": "News"
+  },
+  "header": {
+    "instituteName": "Sabratha Institute of Technical Sciences",
+    "instituteShort": "SITS",
+    "studentPortal": "Student Portal"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome back, {{name}}",
+    "studentId": "Student ID",
+    "department": "Department",
+    "currentGpa": "Current GPA",
+    "completedCredits": "Completed Credits",
+    "currentSemester": "Current Semester",
+    "upcomingLectures": "Upcoming Lectures",
+    "recentNews": "Latest News",
+    "semesterProgress": "Semester Progress",
+    "viewAll": "View All",
+    "noUpcoming": "No upcoming lectures today"
+  },
+  "grades": {
+    "title": "My Grades",
+    "semester": "Semester",
+    "course": "Course",
+    "code": "Code",
+    "credits": "Credits",
+    "grade": "Grade",
+    "points": "Points",
+    "gpa": "GPA",
+    "cumulativeGpa": "Cumulative GPA",
+    "semesterGpa": "Semester GPA",
+    "totalCredits": "Total Credits",
+    "gpaTrend": "GPA Trend",
+    "noData": "No grade data available",
+    "overall": "Overall"
+  },
+  "courses": {
+    "title": "Course Catalog",
+    "available": "Available Courses",
+    "search": "Search courses...",
+    "filter": "Filter by semester",
+    "all": "All",
+    "credits": "Credits",
+    "instructor": "Instructor",
+    "schedule": "Schedule",
+    "capacity": "Capacity",
+    "enrolled": "Enrolled",
+    "register": "Register",
+    "registered": "Registered",
+    "full": "Full",
+    "noCourses": "No courses found",
+    "myCourses": "My Registered Courses"
+  },
+  "lectures": {
+    "title": "Lecture Schedule",
+    "weekly": "Weekly Schedule",
+    "day": "Day",
+    "time": "Time",
+    "room": "Room",
+    "course": "Course",
+    "instructor": "Instructor",
+    "register": "Register",
+    "cancel": "Cancel",
+    "registered": "Registered",
+    "myLectures": "My Registered Lectures",
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday",
+    "noLectures": "No lectures to display"
+  },
+  "semesters": {
+    "title": "Semester Progress",
+    "timeline": "Academic Timeline",
+    "current": "Current",
+    "completed": "Completed",
+    "upcoming": "Upcoming",
+    "courses": "Courses",
+    "gpa": "GPA",
+    "credits": "Credits",
+    "status": "Status",
+    "semester": "Semester",
+    "year": "Year",
+    "noSemesters": "No semester data available"
+  },
+  "news": {
+    "title": "News & Updates",
+    "latest": "Latest News",
+    "announcements": "Announcements",
+    "events": "Events",
+    "readMore": "Read More",
+    "noNews": "No news available",
+    "publishedOn": "Published on {{date}}",
+    "categories": "Categories",
+    "all": "All"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Retry",
+    "noData": "No data available",
+    "back": "Back",
+    "next": "Next",
+    "close": "Close"
+  },
+  "days": {
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday"
+  }
+}

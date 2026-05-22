@@ -1,0 +1,122 @@
+{
+  "nav": {
+    "dashboard": "الرئيسية",
+    "grades": "درجاتي",
+    "courses": "المقررات",
+    "lectures": "المحاضرات",
+    "semesters": "الفصول الدراسية",
+    "news": "الأخبار"
+  },
+  "header": {
+    "instituteName": "معهد صبراتة للتقنية و العلوم التطبيقية",
+    "instituteShort": "م ص ت ع",
+    "studentPortal": "بوابة الطالب"
+  },
+  "dashboard": {
+    "title": "الرئيسية",
+    "welcome": "مرحباً بعودتك، {{name}}",
+    "studentId": "رقم الطالب",
+    "department": "القسم",
+    "currentGpa": "المعدل التراكمي",
+    "completedCredits": "الساعات المعتمدة",
+    "currentSemester": "الفصل الحالي",
+    "upcomingLectures": "المحاضرات القادمة",
+    "recentNews": "آخر الأخبار",
+    "semesterProgress": "تقدم الفصل الدراسي",
+    "viewAll": "عرض الكل",
+    "noUpcoming": "لا توجد محاضرات قادمة اليوم"
+  },
+  "grades": {
+    "title": "درجاتي",
+    "semester": "الفصل",
+    "course": "المقرر",
+    "code": "الرمز",
+    "credits": "الساعات",
+    "grade": "الدرجة",
+    "points": "النقاط",
+    "gpa": "المعدل",
+    "cumulativeGpa": "المعدل التراكمي",
+    "semesterGpa": "معدل الفصل",
+    "totalCredits": "إجمالي الساعات",
+    "gpaTrend": "اتجاه المعدل",
+    "noData": "لا توجد بيانات درجات متاحة",
+    "overall": "الإجمالي"
+  },
+  "courses": {
+    "title": "المقررات الدراسية",
+    "available": "المقررات المتاحة",
+    "search": "ابحث عن مقرر...",
+    "filter": "تصفية حسب الفصل",
+    "all": "الكل",
+    "credits": "ساعات",
+    "instructor": "الأستاذ",
+    "schedule": "الموعد",
+    "capacity": "السعة",
+    "enrolled": "المسجلون",
+    "register": "تسجيل",
+    "registered": "مسجل",
+    "full": "مكتمل",
+    "noCourses": "لم يتم العثور على مقررات",
+    "myCourses": "مقرراتي المسجلة"
+  },
+  "lectures": {
+    "title": "جدول المحاضرات",
+    "weekly": "الجدول الأسبوعي",
+    "day": "اليوم",
+    "time": "الوقت",
+    "room": "القاعة",
+    "course": "المقرر",
+    "instructor": "الأستاذ",
+    "register": "تسجيل",
+    "cancel": "إلغاء",
+    "registered": "مسجل",
+    "myLectures": "محاضراتي المسجلة",
+    "monday": "الإثنين",
+    "tuesday": "الثلاثاء",
+    "wednesday": "الأربعاء",
+    "thursday": "الخميس",
+    "friday": "الجمعة",
+    "noLectures": "لا توجد محاضرات للعرض"
+  },
+  "semesters": {
+    "title": "الفصول الدراسية",
+    "timeline": "الخط الزمني الأكاديمي",
+    "current": "حالي",
+    "completed": "مكتمل",
+    "upcoming": "قادم",
+    "courses": "المقررات",
+    "gpa": "المعدل",
+    "credits": "الساعات",
+    "status": "الحالة",
+    "semester": "الفصل",
+    "year": "السنة",
+    "noSemesters": "لا توجد بيانات فصول متاحة"
+  },
+  "news": {
+    "title": "الأخبار و المستجدات",
+    "latest": "آخر الأخبار",
+    "announcements": "إعلانات",
+    "events": "فعاليات",
+    "readMore": "اقرأ المزيد",
+    "noNews": "لا توجد أخبار متاحة",
+    "publishedOn": "نشر في {{date}}",
+    "categories": "التصنيفات",
+    "all": "الكل"
+  },
+  "common": {
+    "loading": "جاري التحميل...",
+    "error": "حدث خطأ",
+    "retry": "إعادة المحاولة",
+    "noData": "لا توجد بيانات",
+    "back": "رجوع",
+    "next": "التالي",
+    "close": "إغلاق"
+  },
+  "days": {
+    "monday": "الإثنين",
+    "tuesday": "الثلاثاء",
+    "wednesday": "الأربعاء",
+    "thursday": "الخميس",
+    "friday": "الجمعة"
+  }
+}

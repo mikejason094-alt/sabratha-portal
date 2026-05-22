@@ -1,0 +1,81 @@
+[
+  {
+    "id": 1,
+    "nameEn": "Semester 1",
+    "nameAr": "الفصل الأول",
+    "year": "2022-2023",
+    "status": "completed",
+    "gpa": 3.10,
+    "credits": 15,
+    "courses": [
+      { "code": "CS101", "nameEn": "Introduction to Programming", "nameAr": "مقدمة في البرمجة", "credits": 3, "grade": "B+", "points": 3.33 },
+      { "code": "MTH101", "nameEn": "Calculus I", "nameAr": "التفاضل و التكامل 1", "credits": 3, "grade": "B", "points": 3.00 },
+      { "code": "PHY101", "nameEn": "Physics I", "nameAr": "الفيزياء 1", "credits": 3, "grade": "B-", "points": 2.67 },
+      { "code": "ENG101", "nameEn": "English I", "nameAr": "اللغة الإنجليزية 1", "credits": 3, "grade": "A-", "points": 3.67 },
+      { "code": "ARB101", "nameEn": "Arabic Language", "nameAr": "اللغة العربية", "credits": 3, "grade": "A", "points": 4.00 }
+    ]
+  },
+  {
+    "id": 2,
+    "nameEn": "Semester 2",
+    "nameAr": "الفصل الثاني",
+    "year": "2022-2023",
+    "status": "completed",
+    "gpa": 3.27,
+    "credits": 15,
+    "courses": [
+      { "code": "CS102", "nameEn": "Object-Oriented Programming", "nameAr": "البرمجة كائنية التوجه", "credits": 3, "grade": "B+", "points": 3.33 },
+      { "code": "MTH102", "nameEn": "Calculus II", "nameAr": "التفاضل و التكامل 2", "credits": 3, "grade": "B", "points": 3.00 },
+      { "code": "PHY102", "nameEn": "Physics II", "nameAr": "الفيزياء 2", "credits": 3, "grade": "B+", "points": 3.33 },
+      { "code": "CS201", "nameEn": "Data Structures", "nameAr": "هياكل البيانات", "credits": 3, "grade": "B", "points": 3.00 },
+      { "code": "MTH201", "nameEn": "Linear Algebra", "nameAr": "الجبر الخطي", "credits": 3, "grade": "A-", "points": 3.67 }
+    ]
+  },
+  {
+    "id": 3,
+    "nameEn": "Semester 3",
+    "nameAr": "الفصل الثالث",
+    "year": "2023-2024",
+    "status": "completed",
+    "gpa": 3.53,
+    "credits": 15,
+    "courses": [
+      { "code": "CS202", "nameEn": "Algorithms", "nameAr": "الخوارزميات", "credits": 3, "grade": "B+", "points": 3.33 },
+      { "code": "CS301", "nameEn": "Database Systems", "nameAr": "نظم قواعد البيانات", "credits": 3, "grade": "A-", "points": 3.67 },
+      { "code": "CS302", "nameEn": "Computer Networks", "nameAr": "شبكات الحاسوب", "credits": 3, "grade": "B+", "points": 3.33 },
+      { "code": "MTH301", "nameEn": "Probability & Statistics", "nameAr": "الاحتمالات و الإحصاء", "credits": 3, "grade": "A-", "points": 3.67 },
+      { "code": "ENG201", "nameEn": "Technical English", "nameAr": "الإنجليزية التقنية", "credits": 3, "grade": "B+", "points": 3.33 }
+    ]
+  },
+  {
+    "id": 4,
+    "nameEn": "Semester 4",
+    "nameAr": "الفصل الرابع",
+    "year": "2023-2024",
+    "status": "completed",
+    "gpa": 3.67,
+    "credits": 15,
+    "courses": [
+      { "code": "CS303", "nameEn": "Operating Systems", "nameAr": "نظم التشغيل", "credits": 3, "grade": "A-", "points": 3.67 },
+      { "code": "CS304", "nameEn": "Software Engineering", "nameAr": "هندسة البرمجيات", "credits": 3, "grade": "B+", "points": 3.33 },
+      { "code": "CS401", "nameEn": "Web Development", "nameAr": "تطوير الويب", "credits": 3, "grade": "A", "points": 4.00 },
+      { "code": "CS402", "nameEn": "Artificial Intelligence", "nameAr": "الذكاء الاصطناعي", "credits": 3, "grade": "A-", "points": 3.67 },
+      { "code": "MTH302", "nameEn": "Discrete Mathematics", "nameAr": "الرياضيات المتقطعة", "credits": 3, "grade": "B+", "points": 3.33 }
+    ]
+  },
+  {
+    "id": 5,
+    "nameEn": "Semester 5",
+    "nameAr": "الفصل الخامس",
+    "year": "2024-2025",
+    "status": "in-progress",
+    "gpa": null,
+    "credits": 12,
+    "courses": [
+      { "code": "CS403", "nameEn": "Machine Learning", "nameAr": "تعلم الآلة", "credits": 3, "grade": null, "points": null },
+      { "code": "CS404", "nameEn": "Cybersecurity", "nameAr": "الأمن السيبراني", "credits": 3, "grade": null, "points": null },
+      { "code": "CS501", "nameEn": "Mobile App Development", "nameAr": "تطوير تطبيقات الجوال", "credits": 3, "grade": null, "points": null },
+      { "code": "CS502", "nameEn": "Cloud Computing", "nameAr": "الحوسبة السحابية", "credits": 3, "grade": null, "points": null }
+    ]
+  }
+]
