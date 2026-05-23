@@ -11,6 +11,7 @@ import semesterRoutes from './routes/semesters.js'
 import courseRoutes from './routes/courses.js'
 import lectureRoutes from './routes/lectures.js'
 import newsRoutes from './routes/news.js'
+import { seedDatabase } from './seedData.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const app = express()
@@ -59,6 +60,9 @@ async function start() {
   console.log(`NODE_ENV: ${isProd}`)
   console.log(`PORT: ${PORT}`)
   await connectDB()
+  if (getDBStatus()) {
+    try { await seedDatabase() } catch (e) { console.error('Auto-seed error:', e.message) }
+  }
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT} (${isProd ? 'production' : 'development'})`)
   })
