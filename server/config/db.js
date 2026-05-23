@@ -17,7 +17,7 @@ function maskURI(uri) {
 }
 
 async function tryConnectSingle(host, port, dbName, user, pass) {
-  const singleUri = `mongodb://${user}:${pass}@${host}:${port}/${dbName}?ssl=true&tlsInsecure=true&authSource=admin&directConnection=true&serverSelectionTimeoutMS=20000&connectTimeoutMS=20000&socketTimeoutMS=30000&retryWrites=false&compressors=`
+  const singleUri = `mongodb://${user}:${pass}@${host}:${port}/${dbName}?ssl=true&tlsInsecure=true&authSource=admin&directConnection=true&serverSelectionTimeoutMS=20000&connectTimeoutMS=20000&socketTimeoutMS=30000&retryWrites=false&tlsDisableOCSPEndpointCheck=true`
   const client = new MongoClient(singleUri)
   await client.connect()
   return client
