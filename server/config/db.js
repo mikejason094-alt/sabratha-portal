@@ -10,18 +10,35 @@ export async function connectDB() {
   }
   const masked = uri.replace(/\/\/([^:]+):([^@]+)@/, '//$1:***@')
   console.log(`MONGODB_URI: ${masked}`)
-  console.log(`NODE_ENV: ${process.env.NODE_ENV}`)
   try {
-    const conn = await mongoose.connect(uri, { serverSelectionTimeoutMS: 15000 })
-    isConnected = true
-    console.log(`MongoDB connected: ${conn.connection.host}`)
+    mongoose.connection.on('connected', () => { isConnected = true; console.log('MongoDB connected') })
+    mongoose.connection.on('disconnected', () => { isConnected = false })
+    mongoose.connection.on('error', (err) => console.error('MongoDB error:', err.message))
+
+    await mongoose.connect(uri, {
+      serverSelectionTimeoutMS: 30000,
+      connectTimeoutMS: 30000,
+      socketTimeoutMS: 60000,
+    })
+
+    console.log('Mongoose initial connection established')
   } catch (error) {
     console.error(`MongoDB connection error: ${error.message}`)
-    console.error('Connection string host:', uri.split('@')[1]?.split('/')[0] || 'unknown')
     console.warn('Server will start without database')
   }
 }
 
 export function getDBStatus() {
-  return isConnected
+  return mongoose.connection.readyState === 1
+}
+
+export async function waitForDB(timeoutMs = 30000) {
+  if (getDBStatus()) return true
+  return new Promise((resolve) => {
+    const timeout = setTimeout(() => resolve(false), timeoutMs)
+    mongoose.connection.once('connected', () => {
+      clearTimeout(timeout)
+      resolve(true)
+    })
+  })
 }

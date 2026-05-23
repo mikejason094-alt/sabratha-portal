@@ -3,7 +3,7 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import express from 'express'
 import cors from 'cors'
-import { connectDB, getDBStatus } from './config/db.js'
+import { connectDB, getDBStatus, waitForDB } from './config/db.js'
 import { errorHandler } from './middleware/errorHandler.js'
 import authRoutes from './routes/auth.js'
 import studentRoutes from './routes/student.js'
@@ -60,8 +60,11 @@ async function start() {
   console.log(`NODE_ENV: ${isProd}`)
   console.log(`PORT: ${PORT}`)
   await connectDB()
-  if (getDBStatus()) {
+  const dbReady = await waitForDB()
+  if (dbReady) {
     try { await seedDatabase() } catch (e) { console.error('Auto-seed error:', e.message) }
+  } else {
+    console.warn('Database not ready after 30s — skipping auto-seed')
   }
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT} (${isProd ? 'production' : 'development'})`)
