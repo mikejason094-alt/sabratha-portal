@@ -36,12 +36,12 @@ export default function Login() {
 
       <div className="w-full max-w-md relative">
         <div className="text-center mb-8">
-          <div className="w-28 h-28 mx-auto mb-4 rounded-2xl bg-primary-600 flex items-center justify-center p-2 shadow-2xl">
+          <div className="w-32 h-32 mx-auto mb-4 rounded-2xl bg-primary-600 flex items-center justify-center p-2 shadow-2xl">
             <img src="/images/logo.png" alt="SITS Logo"
               className="w-full h-full object-contain" />
           </div>
-          <h1 className="text-2xl font-bold text-white drop-shadow-lg">
-            {isAr ? 'معهد صبراتة للتقنية و العلوم التطبيقية' : 'Sabratha Institute of Technical Sciences'}
+          <h1 className="text-2xl font-bold text-white drop-shadow-lg leading-relaxed">
+            {isAr ? 'المعهد العالي للعلوم و التقنية - صبراتة' : 'Higher Institute of Sciences and Technology - Sabratha'}
           </h1>
           <p className="text-primary-200 mt-2 drop-shadow">
             {isAr ? 'بوابة الدخول الموحدة' : 'Unified Portal'}
