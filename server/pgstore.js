@@ -4,32 +4,19 @@ const { Pool } = pkg
 let idCounter = Date.now()
 function newId() { return String(++idCounter) }
 
-function buildWhereClause(query, paramIndex) {
-  const clauses = []
-  const params = []
-  let idx = paramIndex
-
+function matchQuery(obj, query) {
   for (const [key, val] of Object.entries(query)) {
-    if (val && typeof val === 'object' && '$in' in val) {
-      if (val.$in.length === 0) continue
-      const placeholders = val.$in.map((_, i) => `$${idx + i + 1}`).join(',')
-      clauses.push(`data->>'${key}' IN (${placeholders})`)
-      params.push(...val.$in.map(String))
-      idx += val.$in.length
-    } else {
-      clauses.push(`data->>'${key}' = $${idx + 1}`)
-      params.push(String(val))
-      idx++
-    }
+    if (key === '_id') { if (obj._id !== val) return false }
+    else if (val && typeof val === 'object' && '$in' in val) { if (!val.$in.includes(obj[key])) return false }
+    else { if (obj[key] !== val) return false }
   }
-  return { clauses, params, nextIdx: idx }
+  return true
 }
 
 class Collection {
   constructor(pool, name) {
     this.pool = pool
     this.name = name
-    this.docs = [] // mirror for findOne fast-path
   }
 
   async _init() {
@@ -44,22 +31,20 @@ class Collection {
         UNIQUE(collection, doc_id)
       )
     `)
-    await this.pool.query('CREATE INDEX IF NOT EXISTS idx_docs_collection ON documents(collection)')
-    await this.pool.query('CREATE INDEX IF NOT EXISTS idx_docs_gin ON documents USING gin(data)')
   }
 
-  async _loadAll() {
+  async _allDocs() {
     const result = await this.pool.query(
-      'SELECT doc_id, data FROM documents WHERE collection = $1', [this.name]
+      'SELECT doc_id, data FROM documents WHERE collection = $1 ORDER BY id',
+      [this.name]
     )
-    this.docs = result.rows.map(r => ({ ...r.data, _id: r.doc_id }))
+    return result.rows.map(r => ({ ...r.data, _id: r.doc_id }))
   }
 
-  _wrapDoc(data) {
-    const doc = { ...data }
-    if (this.name === 'users') {
+  _wrapDoc(doc) {
+    if (this.name === 'users' && doc) {
       doc.toObject = () => { const { password, ...rest } = doc; return rest }
-    } else {
+    } else if (doc) {
       doc.toObject = () => ({ ...doc })
     }
     return doc
@@ -68,84 +53,55 @@ class Collection {
   async _save(doc) {
     await this.pool.query(`
       INSERT INTO documents (collection, doc_id, data, created_at, updated_at)
-      VALUES ($1, $2, $3::jsonb, $4, $4)
+      VALUES ($1, $2, $3, $4, $4)
       ON CONFLICT (collection, doc_id)
-      DO UPDATE SET data = $3::jsonb, updated_at = NOW()
-    `, [this.name, doc._id, JSON.stringify(doc), new Date().toISOString()])
+      DO UPDATE SET data = $3, updated_at = NOW()
+    `, [this.name, doc._id, doc, new Date().toISOString()])
   }
 
   async findOne(query) {
-    const q = buildWhereClause(query, 1)
-    let result
-    if (q.clauses.length === 0) {
-      result = await this.pool.query('SELECT data FROM documents WHERE collection = $1 LIMIT 1', [this.name])
-    } else {
-      const sql = `SELECT data FROM documents WHERE collection = $${q.nextIdx + 1} AND ${q.clauses.join(' AND ')} LIMIT 1`
-      result = await this.pool.query(sql, [...q.params, this.name])
+    if (query._id) {
+      const result = await this.pool.query(
+        'SELECT data FROM documents WHERE collection = $1 AND doc_id = $2 LIMIT 1',
+        [this.name, query._id]
+      )
+      if (!result.rows[0]) return null
+      return this._wrapDoc({ ...result.rows[0].data, _id: result.rows[0].data._id || query._id })
     }
-    if (!result.rows[0]) return null
-    return this._wrapDoc(result.rows[0].data)
+    // For non-_id queries, load all and filter in JS
+    const docs = await this._allDocs()
+    for (const doc of docs) {
+      if (matchQuery(doc, query)) return this._wrapDoc(doc)
+    }
+    return null
   }
 
   async findById(id) { return this.findOne({ _id: id }) }
 
-  find(query = {}) {
-    const self = this
-    const q = buildWhereClause(query, 1)
-    const sql = q.clauses.length === 0
-      ? `SELECT data, doc_id FROM documents WHERE collection = $${q.nextIdx + 1}`
-      : `SELECT data, doc_id FROM documents WHERE collection = $${q.nextIdx + 1} AND ${q.clauses.join(' AND ')}`
-
-    const params = [...q.params, this.name]
-    let sortField = null, sortDir = 1
-
-    const qObj = {
-      _promise: null,
-      sort(sortObj) {
-        const field = Object.keys(sortObj)[0]
-        sortField = field
-        sortDir = sortObj[field]
-        return this
-      },
-      then(resolve) {
-        if (!this._promise) this._promise = self._execFind(sql, params, sortField, sortDir)
-        return this._promise.then(resolve)
-      },
-      async exec() {
-        if (!this._promise) this._promise = self._execFind(sql, params, sortField, sortDir)
-        return this._promise
-      },
-    }
-    return qObj
-  }
-
-  async _execFind(sql, params, sortField, sortDir) {
-    const result = await this.pool.query(sql, params)
-    let docs = result.rows.map(r => {
-      const doc = this._wrapDoc(r.data)
-      doc._id = r.doc_id
-      return doc
-    })
-    if (sortField) {
-      docs.sort((a, b) => {
-        const av = a[sortField] ?? '', bv = b[sortField] ?? ''
-        if (av < bv) return -1 * sortDir
-        if (av > bv) return 1 * sortDir
+  async find(query = {}) {
+    const docs = await this._allDocs()
+    const results = docs.filter(d => matchQuery(d, query))
+    results.forEach(d => this._wrapDoc(d))
+    const q = { _results: results }
+    q.sort = function (sortObj) {
+      const field = Object.keys(sortObj)[0]
+      const dir = sortObj[field]
+      this._results.sort((a, b) => {
+        if (a[field] < b[field]) return -1 * dir
+        if (a[field] > b[field]) return 1 * dir
         return 0
       })
+      return this
     }
-    return docs
+    q.then = (resolve) => resolve(this._results)
+    q.exec = async () => this._results
+    return q
   }
 
   async insertOne(data) {
     const doc = { ...data, _id: newId(), createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }
-    if (this.name === 'users') {
-      doc.toObject = () => { const { password, ...rest } = doc; return rest }
-    } else {
-      doc.toObject = () => ({ ...doc })
-    }
+    this._wrapDoc(doc)
     await this._save(doc)
-    this.docs.push(doc)
     return doc
   }
 
@@ -158,23 +114,25 @@ class Collection {
   async create(data) { return this.insertOne(data) }
 
   async deleteOne(query) {
-    const q = buildWhereClause(query, 1)
-    if (q.clauses.length === 0) return { deletedCount: 0 }
-    const sql = `DELETE FROM documents WHERE collection = $${q.nextIdx + 1} AND ${q.clauses.join(' AND ')}`
-    const result = await this.pool.query(sql, [...q.params, this.name])
-    this.docs = this.docs.filter(d => {
-      for (const [k, v] of Object.entries(query)) {
-        if (d[k] !== v) return true
+    if (query._id) {
+      const result = await this.pool.query(
+        'DELETE FROM documents WHERE collection = $1 AND doc_id = $2',
+        [this.name, query._id]
+      )
+      return { deletedCount: result.rowCount }
+    }
+    const docs = await this._allDocs()
+    for (const doc of docs) {
+      if (matchQuery(doc, query)) {
+        await this.pool.query('DELETE FROM documents WHERE collection = $1 AND doc_id = $2', [this.name, doc._id])
+        return { deletedCount: 1 }
       }
-      return false
-    })
-    return { deletedCount: result.rowCount }
+    }
+    return { deletedCount: 0 }
   }
 
   async saveDoc(doc) {
     await this._save(doc)
-    const idx = this.docs.findIndex(d => d._id === doc._id)
-    if (idx >= 0) this.docs[idx] = doc
   }
 }
 
@@ -194,9 +152,8 @@ export default class PGStore {
   }
 
   async init() {
-    for (const col of Object.values(this).filter(v => v instanceof Collection)) {
-      await col._init()
-    }
+    // Create the table once (first collection's _init creates it)
+    await this.users._init()
   }
 
   async seed() {
@@ -208,11 +165,9 @@ export default class PGStore {
     const studentPw = await bcrypt.hash('student123', 12)
     const teacherPw = await bcrypt.hash('teacher123', 12)
 
-    // Student
     await this.users.insertOne({ email: 'islam.alhawwari@sits.edu.ly', password: studentPw, role: 'student', studentId: 'STU-2024-001', isActive: true })
     await this.students.insertOne({ studentId: 'STU-2024-001', nameEn: 'Islam Almuneer Alhawwari', nameAr: 'إسلام المنير الحواري', email: 'islam.alhawwari@sits.edu.ly', department: 'Software Engineering', departmentAr: 'هندسة البرمجيات', enrollmentYear: 2024, currentSemester: 3, gpa: 3.45, totalCredits: 42 })
 
-    // Teachers
     const t1 = await this.users.insertOne({ email: 'ahmed.hassan@sits.edu.ly', password: teacherPw, role: 'teacher', nameEn: 'Dr. Ahmed', nameAr: 'د. أحمد', department: 'Software Engineering', departmentAr: 'هندسة البرمجيات', isActive: true })
     const t2 = await this.users.insertOne({ email: 'sara.ali@sits.edu.ly', password: teacherPw, role: 'teacher', nameEn: 'Dr. Sara', nameAr: 'د. سارة', department: 'Software Engineering', departmentAr: 'هندسة البرمجيات', isActive: true })
     const t3 = await this.users.insertOne({ email: 'khalid.omar@sits.edu.ly', password: teacherPw, role: 'teacher', nameEn: 'Dr. Khalid', nameAr: 'د. خالد', department: 'Mathematics', departmentAr: 'الرياضيات', isActive: true })
@@ -252,14 +207,12 @@ export default class PGStore {
       { titleEn: 'Software Engineering Workshop', titleAr: 'ورشة هندسة البرمجيات', summaryEn: 'A hands-on workshop on modern software engineering practices.', summaryAr: 'ورشة عملية حول ممارسات هندسة البرمجيات الحديثة.', contentEn: 'The department is organizing a two-day workshop on software engineering best practices including agile methodologies, version control, and CI/CD pipelines.', contentAr: 'ينظم القسم ورشة عمل لمدة يومين حول أفضل ممارسات هندسة البرمجيات بما في ذلك المنهجيات الرشيقة والتحكم في الإصدارات وخطوط أنابيب CI/CD.', category: 'event', date: new Date().toISOString(), image: null, author: 'Academic Affairs', isPublished: true },
     ])
 
-    // Sample exams
     await this.exams.insertMany([
       { courseId: courses[0]._id, titleEn: 'Midterm Exam', titleAr: 'امتحان منتصف الفصل', date: '2025-04-15', time: '10:00', duration: 120, room: 'Hall A', maxScore: 100, type: 'midterm', createdBy: t1._id },
       { courseId: courses[4]._id, titleEn: 'Quiz 1', titleAr: 'اختبار قصير 1', date: '2025-03-20', time: '11:00', duration: 30, room: 'Lab 1', maxScore: 20, type: 'quiz', createdBy: t1._id },
       { courseId: courses[5]._id, titleEn: 'Final Exam', titleAr: 'الامتحان النهائي', date: '2025-06-10', time: '09:00', duration: 180, room: 'Hall B', maxScore: 150, type: 'final', createdBy: t2._id },
     ])
 
-    // Sample course grades
     await this.courseGrades.insertMany([
       { courseId: courses[0]._id, studentId: 'STU-2024-001', semesterNumber: 1, grade: 'B+', points: 3.3, updatedBy: t1._id },
       { courseId: courses[2]._id, studentId: 'STU-2024-001', semesterNumber: 1, grade: 'A-', points: 3.7, updatedBy: t3._id },
