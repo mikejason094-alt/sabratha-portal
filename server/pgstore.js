@@ -4,18 +4,6 @@ const { Pool } = pkg
 let idCounter = Date.now()
 function newId() { return String(++idCounter) }
 
-function buildQueryJson(query) {
-  const entries = {}
-  for (const [key, val] of Object.entries(query)) {
-    if (val && typeof val === 'object' && '$in' in val) {
-      // $in handled separately
-      continue
-    }
-    entries[key] = val
-  }
-  return entries
-}
-
 function buildWhereClause(query, paramIndex) {
   const clauses = []
   const params = []
@@ -28,8 +16,8 @@ function buildWhereClause(query, paramIndex) {
       params.push(...val.$in.map(String))
       idx += val.$in.length
     } else {
-      clauses.push(`data @> $${idx + 1}::jsonb`)
-      params.push(JSON.stringify({ [key]: val }))
+      clauses.push(`data @> $${idx + 1}`)
+      params.push({ [key]: val })
       idx++
     }
   }
