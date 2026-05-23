@@ -32,9 +32,15 @@ function createAtlasProxy(targetHost, targetPort) {
     })
 
     remoteSocket.on('connect', () => {
-      console.log('Proxy: TLS to Atlas established, bridging connections')
-      localSocket.pipe(remoteSocket)
-      remoteSocket.pipe(localSocket)
+      console.log('Proxy: TLS to Atlas established')
+      remoteSocket.on('data', (d) => console.log('Proxy: got data from Atlas, len='+d.length))
+      remoteSocket.on('error', (e) => console.log('Proxy: TLS error:', e.message))
+      remoteSocket.on('close', () => console.log('Proxy: TLS closed'))
+      // Send test bytes
+      remoteSocket.write(Buffer.from([16,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]), (err) => {
+        if (err) console.log('Proxy: write failed:', err.message)
+        else console.log('Proxy: write OK, waiting for response...')
+      })
     })
 
     remoteSocket.on('error', (err) => {
