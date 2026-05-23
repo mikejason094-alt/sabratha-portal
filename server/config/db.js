@@ -16,14 +16,9 @@ function maskURI(uri) {
   return uri.replace(/\/\/([^:]+):([^@]+)@/, '//$1:***@')
 }
 
-// Try to connect with TLS options that match our working tls.connect() test
 async function tryConnectSingle(host, port, dbName, user, pass) {
-  const singleUri = `mongodb://${user}:${pass}@${host}:${port}/${dbName}?ssl=true&authSource=admin&directConnection=true&serverSelectionTimeoutMS=15000&connectTimeoutMS=15000`
-  const client = new MongoClient(singleUri, {
-    tls: true,
-    tlsInsecure: true,
-    family: 4,
-  })
+  const singleUri = `mongodb://${user}:${pass}@${host}:${port}/${dbName}?ssl=true&tlsInsecure=true&authSource=admin&directConnection=true&serverSelectionTimeoutMS=20000&connectTimeoutMS=20000&socketTimeoutMS=30000&retryWrites=false&compressors=`
+  const client = new MongoClient(singleUri)
   await client.connect()
   return client
 }
