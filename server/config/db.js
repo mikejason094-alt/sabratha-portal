@@ -164,6 +164,7 @@ export async function connectDB() {
         connectTimeoutMS: 60000,
         socketTimeoutMS: 120000,
         family: 4,
+        tlsInsecure: true,
       })
 
       console.log('Mongoose initial connection established')
