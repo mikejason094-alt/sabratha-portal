@@ -6,8 +6,8 @@ const router = Router()
 
 router.get('/', protect, async (req, res, next) => {
   try {
-    const lectures = store.lectures.find({ isActive: true }).sort({ day: 1, time: 1 })
-    const registered = store.lectureRegistrations.find({ studentId: req.user.studentId })
+    const lectures = await store.lectures.find({ isActive: true }).sort({ day: 1, time: 1 })
+    const registered = await store.lectureRegistrations.find({ studentId: req.user.studentId })
     const registeredIds = new Set(registered.map((r) => r.lectureId))
     const result = lectures.map((l) => ({ ...l, registered: registeredIds.has(l._id) }))
     res.json(result)

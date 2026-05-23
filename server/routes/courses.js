@@ -6,8 +6,8 @@ const router = Router()
 
 router.get('/', protect, async (req, res, next) => {
   try {
-    const courses = store.courses.find({ isActive: true }).sort({ semester: 1, code: 1 })
-    const enrolled = store.enrollments.find({ studentId: req.user.studentId })
+    const courses = await store.courses.find({ isActive: true }).sort({ semester: 1, code: 1 })
+    const enrolled = await store.enrollments.find({ studentId: req.user.studentId })
     const enrolledCourseIds = new Set(enrolled.map((e) => e.courseId))
     const result = courses.map((c) => ({ ...c, registered: enrolledCourseIds.has(c._id) }))
     res.json(result)
@@ -35,7 +35,7 @@ router.post('/:id/register', protect, async (req, res, next) => {
       return res.json({ registered: false, message: 'Unregistered successfully' })
     }
 
-    const allCourses = store.courses.find({ isActive: true })
+    const allCourses = store.courses.docs.filter(c => c.isActive)
     const courseDoc = allCourses.find(c => c._id === req.params.id)
     if (courseDoc && courseDoc.enrolled >= courseDoc.capacity) {
       return res.status(400).json({ message: 'Course is full' })
@@ -52,9 +52,9 @@ router.post('/:id/register', protect, async (req, res, next) => {
 
 router.get('/my', protect, async (req, res, next) => {
   try {
-    const enrolled = store.enrollments.find({ studentId: req.user.studentId })
+    const enrolled = await store.enrollments.find({ studentId: req.user.studentId })
     const courseIds = enrolled.map((e) => e.courseId)
-    const courses = store.courses.find({ isActive: true }).filter(c => courseIds.includes(c._id))
+    const courses = store.courses.docs.filter(c => c.isActive && courseIds.includes(c._id))
     res.json(courses.map((c) => ({ ...c, registered: true })))
   } catch (error) {
     next(error)

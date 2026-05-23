@@ -10,7 +10,7 @@ router.get('/', async (req, res, next) => {
     if (req.query.category && req.query.category !== 'all') {
       filter.category = req.query.category
     }
-    const news = store.news.find(filter).sort({ date: -1 })
+    const news = await store.news.find(filter).sort({ date: -1 })
     res.json(news)
   } catch (error) {
     next(error)
