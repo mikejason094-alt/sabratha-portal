@@ -36,7 +36,7 @@ export default function Login() {
             <span className="text-3xl font-bold text-primary-900">{isAr ? 'م' : 'S'}</span>
           </div>
           <h1 className="text-2xl font-bold text-white">{isAr ? 'معهد صبراتة للتقنية و العلوم التطبيقية' : 'Sabratha Institute of Technical Sciences'}</h1>
-          <p className="text-primary-200 mt-2">{t('header.studentPortal')}</p>
+          <p className="text-primary-200 mt-2">{isAr ? 'بوابة الدخول الموحدة' : 'Unified Portal'}</p>
         </div>
 
         <div className="bg-white rounded-2xl shadow-2xl p-8">
@@ -90,13 +90,15 @@ export default function Login() {
             </button>
           </form>
 
-          <div className="mt-6 pt-4 border-t border-gray-100">
-            <p className="text-xs text-gray-400 text-center">
+          <div className="mt-6 pt-4 border-t border-gray-100 space-y-2">
+            <p className="text-xs text-gray-400 text-center font-medium">
               {isAr ? 'بيانات الدخول التجريبية:' : 'Demo credentials:'}
             </p>
-            <p className="text-xs text-gray-500 text-center mt-1">
-              islam.alhawwari@sits.edu.ly / student123
-            </p>
+            <div className="text-xs text-gray-500 text-center space-y-1">
+              <p>{isAr ? 'طالب:' : 'Student:'} islam.alhawwari@sits.edu.ly / student123</p>
+              <p>{isAr ? 'مدرس:' : 'Teacher:'} ahmed.hassan@sits.edu.ly / teacher123</p>
+              <p className="text-gray-400">sara.ali - khalid.omar - mohamed.ali - omar.hassan / teacher123</p>
+            </div>
           </div>
         </div>
       </div>

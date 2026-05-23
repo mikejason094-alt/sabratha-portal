@@ -12,7 +12,7 @@ router.post('/login', async (req, res, next) => {
       return res.status(400).json({ message: 'Email and password are required' })
     }
 
-    const user = store.users.findOne({ email: email.toLowerCase() })
+    const user = await store.users.findOne({ email: email.toLowerCase() })
     if (!user) {
       return res.status(401).json({ message: 'Invalid email or password' })
     }
@@ -22,13 +22,20 @@ router.post('/login', async (req, res, next) => {
       return res.status(401).json({ message: 'Invalid email or password' })
     }
 
-    const student = user.studentId ? store.students.findOne({ studentId: user.studentId }) : null
+    const student = user.studentId ? await store.students.findOne({ studentId: user.studentId }) : null
 
     const token = generateToken(user._id)
 
     res.json({
       token,
-      user: { id: user._id, email: user.email, role: user.role, studentId: user.studentId },
+      user: {
+        id: user._id,
+        email: user.email,
+        role: user.role,
+        studentId: user.studentId,
+        nameEn: user.nameEn,
+        nameAr: user.nameAr,
+      },
       student,
     })
   } catch (error) {
@@ -38,9 +45,9 @@ router.post('/login', async (req, res, next) => {
 
 router.get('/me', protect, async (req, res, next) => {
   try {
-    const user = store.users.findOne({ _id: req.user._id })
+    const user = await store.users.findOne({ _id: req.user._id })
     delete user.password
-    const student = user.studentId ? store.students.findOne({ studentId: user.studentId }) : null
+    const student = user.studentId ? await store.students.findOne({ studentId: user.studentId }) : null
     res.json({ user, student })
   } catch (error) {
     next(error)

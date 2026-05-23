@@ -5,7 +5,8 @@
     "courses": "المقررات",
     "lectures": "المحاضرات",
     "semesters": "الفصول الدراسية",
-    "news": "الأخبار"
+    "news": "الأخبار",
+    "teacherCourses": "مقرراتي"
   },
   "header": {
     "instituteName": "معهد صبراتة للتقنية و العلوم التطبيقية",

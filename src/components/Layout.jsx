@@ -4,7 +4,7 @@ import { useLocation, Link, useNavigate } from 'react-router-dom'
 import { useApp } from '../context/AppContext'
 import { useAuth } from '../context/AuthContext'
 
-const navItems = [
+const studentNav = [
   { path: '/', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6', key: 'dashboard' },
   { path: '/grades', icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z', key: 'grades' },
   { path: '/courses', icon: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253', key: 'courses' },
@@ -13,13 +13,21 @@ const navItems = [
   { path: '/news', icon: 'M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z', key: 'news' },
 ]
 
+const teacherNav = [
+  { path: '/', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6', key: 'dashboard' },
+  { path: '/news', icon: 'M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z', key: 'news' },
+]
+
 export default function Layout({ children }) {
   const { t } = useTranslation()
   const location = useLocation()
   const navigate = useNavigate()
-  const { student, lang, toggleLanguage, dir } = useApp()
-  const { logout } = useAuth()
+  const { lang, toggleLanguage, dir } = useApp()
+  const { user, student, logout } = useAuth()
   const [sidebarOpen, setSidebarOpen] = useState(false)
+
+  const isTeacher = user?.role === 'teacher'
+  const navItems = isTeacher ? teacherNav : studentNav
 
   return (
     <div className="min-h-screen flex flex-col" dir={dir}>
@@ -37,7 +45,7 @@ export default function Layout({ children }) {
               </div>
               <div className="hidden sm:block">
                 <h1 className="font-bold text-lg leading-tight">{t('header.instituteShort')}</h1>
-                <p className="text-xs text-primary-200">{t('header.studentPortal')}</p>
+                <p className="text-xs text-primary-200">{isTeacher ? (lang === 'ar' ? 'بوابة المدرس' : 'Teacher Portal') : t('header.studentPortal')}</p>
               </div>
             </div>
 
@@ -53,12 +61,18 @@ export default function Layout({ children }) {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                 </svg>
               </button>
-              {student && (
+              {user && (
                 <div className="flex items-center gap-2.5">
                   <div className="w-9 h-9 rounded-full bg-primary-400 flex items-center justify-center text-sm font-bold">
-                    {lang === 'ar' ? (student.nameAr || '?').charAt(0) : (student.nameEn || '?').charAt(0)}
+                    {lang === 'ar'
+                      ? (student?.nameAr || user?.nameAr || '?').charAt(0)
+                      : (student?.nameEn || user?.nameEn || '?').charAt(0)}
                   </div>
-                  <span className="hidden md:block text-sm font-medium">{lang === 'ar' ? student.nameAr : student.nameEn}</span>
+                  <span className="hidden md:block text-sm font-medium">
+                    {lang === 'ar'
+                      ? (student?.nameAr || user?.nameAr || '')
+                      : (student?.nameEn || user?.nameEn || '')}
+                  </span>
                 </div>
               )}
             </div>

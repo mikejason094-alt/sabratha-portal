@@ -5,7 +5,8 @@
     "courses": "Courses",
     "lectures": "Lectures",
     "semesters": "Semesters",
-    "news": "News"
+    "news": "News",
+    "teacherCourses": "My Courses"
   },
   "header": {
     "instituteName": "Sabratha Institute of Technical Sciences",

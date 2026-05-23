@@ -19,7 +19,7 @@ router.get('/', async (req, res, next) => {
 
 router.get('/:id', async (req, res, next) => {
   try {
-    const article = store.news.findOne({ _id: req.params.id })
+    const article = await store.news.findOne({ _id: req.params.id })
     if (!article) return res.status(404).json({ message: 'News article not found' })
     res.json(article)
   } catch (error) {

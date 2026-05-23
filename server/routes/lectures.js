@@ -18,20 +18,20 @@ router.get('/', protect, async (req, res, next) => {
 
 router.post('/:id/register', protect, async (req, res, next) => {
   try {
-    const lecture = store.lectures.findOne({ _id: req.params.id })
+    const lecture = await store.lectures.findOne({ _id: req.params.id })
     if (!lecture) return res.status(404).json({ message: 'Lecture not found' })
 
-    const existing = store.lectureRegistrations.findOne({
+    const existing = await store.lectureRegistrations.findOne({
       studentId: req.user.studentId,
       lectureId: req.params.id,
     })
 
     if (existing) {
-      store.lectureRegistrations.deleteOne({ _id: existing._id })
+      await store.lectureRegistrations.deleteOne({ _id: existing._id })
       return res.json({ registered: false, message: 'Unregistered successfully' })
     }
 
-    store.lectureRegistrations.create({ studentId: req.user.studentId, lectureId: req.params.id })
+    await store.lectureRegistrations.create({ studentId: req.user.studentId, lectureId: req.params.id })
     res.json({ registered: true, message: 'Registered successfully' })
   } catch (error) {
     next(error)

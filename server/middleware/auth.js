@@ -13,7 +13,7 @@ export async function protect(req, res, next) {
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET)
-    const user = store.users.findOne({ _id: decoded.id })
+    const user = await store.users.findOne({ _id: decoded.id })
     if (!user || !user.isActive) {
       return res.status(401).json({ message: 'Not authorized, user not found' })
     }

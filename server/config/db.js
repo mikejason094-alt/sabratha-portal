@@ -3,10 +3,11 @@ import store from '../store.js'
 let isConnected = false
 
 export async function connectDB() {
-  console.log('Starting in-memory database...')
+  console.log('Initializing store...')
+  await store.init()
   await store.seed()
   isConnected = true
-  console.log('In-memory database ready')
+  console.log('Store ready')
 }
 
 export function getDBStatus() {

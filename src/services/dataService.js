@@ -40,6 +40,16 @@ export const newsService = {
   getById: (id) => api.get(`/news/${id}`),
 }
 
+export const teacherService = {
+  getCourses: () => api.get('/teacher/courses'),
+  getCourseStudents: (courseId) => api.get(`/teacher/courses/${courseId}/students`),
+  getCourseGrades: (courseId) => api.get(`/teacher/courses/${courseId}/grades`),
+  updateGrade: (courseId, studentId, data) => api.put(`/teacher/courses/${courseId}/grades/${studentId}`, data),
+  getCourseExams: (courseId) => api.get(`/teacher/courses/${courseId}/exams`),
+  createExam: (courseId, data) => api.post(`/teacher/courses/${courseId}/exams`, data),
+  deleteExam: (examId) => api.delete(`/teacher/exams/${examId}`),
+}
+
 export const authService = {
   login: (email, password) => api.post('/auth/login', { email, password }),
   getMe: () => api.get('/auth/me'),

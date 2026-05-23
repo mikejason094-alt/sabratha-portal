@@ -11,6 +11,7 @@ import semesterRoutes from './routes/semesters.js'
 import courseRoutes from './routes/courses.js'
 import lectureRoutes from './routes/lectures.js'
 import newsRoutes from './routes/news.js'
+import teacherRoutes from './routes/teacher.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const app = express()
@@ -34,6 +35,7 @@ app.use('/api/semesters', semesterRoutes)
 app.use('/api/courses', courseRoutes)
 app.use('/api/lectures', lectureRoutes)
 app.use('/api/news', newsRoutes)
+app.use('/api/teacher', teacherRoutes)
 
 if (isProd) {
   const publicPath = path.resolve(__dirname, '..', 'dist')

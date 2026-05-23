@@ -6,7 +6,7 @@ const router = Router()
 
 router.get('/profile', protect, async (req, res, next) => {
   try {
-    const student = store.students.findOne({ studentId: req.user.studentId })
+    const student = await store.students.findOne({ studentId: req.user.studentId })
     if (!student) return res.status(404).json({ message: 'Student not found' })
     res.json(student)
   } catch (error) {
