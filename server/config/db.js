@@ -23,6 +23,7 @@ function buildFallbackURI(originalUri) {
     const originalParams = u.searchParams.toString()
     const params = new URLSearchParams(originalParams)
     if (!params.has('ssl')) params.set('ssl', 'true')
+    if (!params.has('tlsInsecure')) params.set('tlsInsecure', 'true')
     if (!params.has('replicaSet')) params.set('replicaSet', REPLICA_SET)
     if (!params.has('authSource')) params.set('authSource', 'admin')
     if (!params.has('retryWrites')) params.set('retryWrites', 'true')
@@ -93,6 +94,7 @@ export async function connectDB() {
         connectTimeoutMS: 60000,
         socketTimeoutMS: 120000,
         family: 4,
+        tlsInsecure: true,
       })
 
       console.log('Mongoose initial connection established')
