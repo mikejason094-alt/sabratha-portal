@@ -36,9 +36,9 @@ export default function Login() {
 
       <div className="w-full max-w-md relative">
         <div className="text-center mb-8">
-          <div className="w-40 h-40 mx-auto mb-6">
+          <div className="w-44 h-44 mx-auto mb-6">
             <img src="/images/logo.png" alt="SITS Logo"
-              className="w-full h-full object-contain mix-blend-multiply drop-shadow-2xl" />
+              className="w-full h-full object-contain drop-shadow-2xl" />
           </div>
           <h1 className="text-2xl font-bold text-white drop-shadow-lg leading-relaxed">
             {isAr ? 'المعهد العالي للعلوم و التقنية - صبراتة' : 'Higher Institute of Sciences and Technology - Sabratha'}
