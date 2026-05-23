@@ -42,27 +42,24 @@ async function testTCP(host, port, timeout = 15000) {
 async function testTLS(host, port, timeout = 15000) {
   return new Promise((resolve) => {
     const start = Date.now()
-    const socket = new tls.TLSSocket(new net.Socket(), {
-      rejectUnauthorized: false,
-      requestCert: false,
-    })
-    socket.setTimeout(timeout)
-    socket.on('connect', () => {
-      // Wait briefly for TLS handshake to complete
-      setTimeout(() => {
+    try {
+      const socket = tls.connect({ host, port, rejectUnauthorized: false })
+      socket.setTimeout(timeout)
+      socket.on('connect', () => {
         socket.destroy()
-        resolve({ ok: true, ms: Date.now() - start, authorized: socket.authorized })
-      }, 2000)
-    })
-    socket.on('error', (err) => {
-      socket.destroy()
+        resolve({ ok: true, ms: Date.now() - start })
+      })
+      socket.on('error', (err) => {
+        socket.destroy()
+        resolve({ ok: false, error: err.message, ms: Date.now() - start })
+      })
+      socket.on('timeout', () => {
+        socket.destroy()
+        resolve({ ok: false, error: 'timeout', ms: Date.now() - start })
+      })
+    } catch (err) {
       resolve({ ok: false, error: err.message, ms: Date.now() - start })
-    })
-    socket.on('timeout', () => {
-      socket.destroy()
-      resolve({ ok: false, error: 'timeout', ms: Date.now() - start })
-    })
-    socket.connect(port, host)
+    }
   })
 }
 
@@ -94,27 +91,27 @@ export async function connectDB() {
   console.log(`MONGODB_URI: ${maskURI(uri)}`)
 
   // ========== NETWORK DIAGNOSTICS ==========
-  console.log('--- Running network diagnostics ---')
-  // Test general internet connectivity
-  const googleTCP = await testTCP('google.com', 443)
-  console.log(`TCP google.com:443: ${googleTCP.ok ? 'OK' : 'FAIL'} (${googleTCP.ms}ms${googleTCP.error ? ', error: ' + googleTCP.error : ''})`)
-
-  if (googleTCP.ok) {
-    const googleTLS = await testTLS('google.com', 443)
-    console.log(`TLS google.com:443: ${googleTLS.ok ? 'OK' : 'FAIL'} (${googleTLS.ms}ms${googleTLS.error ? ', error: ' + googleTLS.error : ''})`)
-  }
-
-  // Test Atlas shard connectivity
-  for (const host of SHARD_HOSTS) {
-    const [h, p] = host.split(':')
-    const tcpResult = await testTCP(h, parseInt(p))
-    console.log(`TCP ${h}:${p}: ${tcpResult.ok ? 'OK' : 'FAIL'} (${tcpResult.ms}ms${tcpResult.error ? ', error: ' + tcpResult.error : ''})`)
-    if (tcpResult.ok) {
-      const tlsResult = await testTLS(h, parseInt(p))
-      console.log(`TLS ${h}:${p}: ${tlsResult.ok ? 'OK' : 'FAIL'} (${tlsResult.ms}ms${tlsResult.error ? ', error: ' + tlsResult.error : ''})`)
+  try {
+    console.log('--- Running network diagnostics ---')
+    const googleTCP = await testTCP('google.com', 443)
+    console.log(`TCP google.com:443: ${googleTCP.ok ? 'OK' : 'FAIL'} (${googleTCP.ms}ms${googleTCP.error ? ', error: ' + googleTCP.error : ''})`)
+    if (googleTCP.ok) {
+      const googleTLS = await testTLS('google.com', 443)
+      console.log(`TLS google.com:443: ${googleTLS.ok ? 'OK' : 'FAIL'} (${googleTLS.ms}ms${googleTLS.error ? ', error: ' + googleTLS.error : ''})`)
     }
+    for (const host of SHARD_HOSTS) {
+      const [h, p] = host.split(':')
+      const tcpResult = await testTCP(h, parseInt(p))
+      console.log(`TCP ${h}:${p}: ${tcpResult.ok ? 'OK' : 'FAIL'} (${tcpResult.ms}ms${tcpResult.error ? ', error: ' + tcpResult.error : ''})`)
+      if (tcpResult.ok) {
+        const tlsResult = await testTLS(h, parseInt(p))
+        console.log(`TLS ${h}:${p}: ${tlsResult.ok ? 'OK' : 'FAIL'} (${tlsResult.ms}ms${tlsResult.error ? ', error: ' + tlsResult.error : ''})`)
+      }
+    }
+    console.log('--- End of network diagnostics ---')
+  } catch (diagErr) {
+    console.error('Network diagnostics error:', diagErr.message)
   }
-  console.log('--- End of network diagnostics ---')
   // ==========================================
 
   // Try 3 URI strategies in order:
