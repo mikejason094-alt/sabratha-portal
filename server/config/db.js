@@ -1,10 +1,10 @@
 import mongoose from 'mongoose'
+import { MongoClient } from 'mongodb'
 import net from 'net'
 import tls from 'tls'
 
 let isConnected = false
 
-// Hardcoded shard hosts from the Atlas SRV resolution (fallback if DNS fails)
 const SHARD_HOSTS = [
   'ac-o9zhfif-shard-00-00.fgrbzdr.mongodb.net:27017',
   'ac-o9zhfif-shard-00-01.fgrbzdr.mongodb.net:27017',
@@ -16,51 +16,20 @@ function maskURI(uri) {
   return uri.replace(/\/\/([^:]+):([^@]+)@/, '//$1:***@')
 }
 
-// Test raw TCP connectivity to a host:port
-async function testTCP(host, port, timeout = 15000) {
-  return new Promise((resolve) => {
-    const start = Date.now()
-    const socket = new net.Socket()
-    socket.setTimeout(timeout)
-    socket.on('connect', () => {
-      socket.destroy()
-      resolve({ ok: true, ms: Date.now() - start })
-    })
-    socket.on('error', (err) => {
-      socket.destroy()
-      resolve({ ok: false, error: err.message, ms: Date.now() - start })
-    })
-    socket.on('timeout', () => {
-      socket.destroy()
-      resolve({ ok: false, error: 'timeout', ms: Date.now() - start })
-    })
-    socket.connect(port, host)
-  })
-}
-
-// Test TLS connectivity to a host:port (after TCP)
-async function testTLS(host, port, timeout = 15000) {
-  return new Promise((resolve) => {
-    const start = Date.now()
-    try {
-      const socket = tls.connect({ host, port, rejectUnauthorized: false })
-      socket.setTimeout(timeout)
-      socket.on('connect', () => {
-        socket.destroy()
-        resolve({ ok: true, ms: Date.now() - start })
-      })
-      socket.on('error', (err) => {
-        socket.destroy()
-        resolve({ ok: false, error: err.message, ms: Date.now() - start })
-      })
-      socket.on('timeout', () => {
-        socket.destroy()
-        resolve({ ok: false, error: 'timeout', ms: Date.now() - start })
-      })
-    } catch (err) {
-      resolve({ ok: false, error: err.message, ms: Date.now() - start })
-    }
-  })
+// Try to connect with TLS options that match our working tls.connect() test
+async function tryMongoConnect(uri) {
+  const opts = {
+    serverSelectionTimeoutMS: 30000,
+    connectTimeoutMS: 30000,
+    socketTimeoutMS: 60000,
+    family: 4,
+    tls: true,
+    tlsInsecure: true,
+    directConnection: true,
+  }
+  const client = new MongoClient(uri, opts)
+  await client.connect()
+  return client
 }
 
 function buildFallbackURI(originalUri) {
@@ -89,45 +58,33 @@ export async function connectDB() {
   }
   console.log(`MONGODB_URI: ${maskURI(uri)}`)
 
-  // ========== NETWORK DIAGNOSTICS ==========
+  // Network diagnostics
   try {
     console.log('--- Running network diagnostics ---')
-    const googleTCP = await testTCP('google.com', 443)
-    console.log(`TCP google.com:443: ${googleTCP.ok ? 'OK' : 'FAIL'} (${googleTCP.ms}ms${googleTCP.error ? ', error: ' + googleTCP.error : ''})`)
-    if (googleTCP.ok) {
-      const googleTLS = await testTLS('google.com', 443)
-      console.log(`TLS google.com:443: ${googleTLS.ok ? 'OK' : 'FAIL'} (${googleTLS.ms}ms${googleTLS.error ? ', error: ' + googleTLS.error : ''})`)
-    }
-    for (const host of SHARD_HOSTS) {
-      const [h, p] = host.split(':')
-      const tcpResult = await testTCP(h, parseInt(p))
-      console.log(`TCP ${h}:${p}: ${tcpResult.ok ? 'OK' : 'FAIL'} (${tcpResult.ms}ms${tcpResult.error ? ', error: ' + tcpResult.error : ''})`)
-      if (tcpResult.ok) {
-        const tlsResult = await testTLS(h, parseInt(p))
-        console.log(`TLS ${h}:${p}: ${tlsResult.ok ? 'OK' : 'FAIL'} (${tlsResult.ms}ms${tlsResult.error ? ', error: ' + tlsResult.error : ''})`)
-      }
-    }
-    console.log('--- End of network diagnostics ---')
-  } catch (diagErr) {
-    console.error('Network diagnostics error:', diagErr.message)
+    const socket = tls.connect({ host: SHARD_HOSTS[0].split(':')[0], port: 27017, rejectUnauthorized: false })
+    await new Promise((resolve, reject) => {
+      socket.setTimeout(10000)
+      socket.on('connect', resolve)
+      socket.on('error', reject)
+      socket.on('timeout', () => reject(new Error('timeout')))
+    })
+    socket.destroy()
+    console.log('Raw TLS to Atlas shard: OK')
+  } catch (e) {
+    console.log(`Raw TLS to Atlas shard: FAILED (${e.message})`)
   }
-  // ==========================================
+  console.log('--- End ---')
 
-  // Try 3 URI strategies in order:
+  // Build URIs to try
   const urisToTry = [uri]
 
-  // 1. If SRV, try converting via DNS resolution
   if (uri.startsWith('mongodb+srv://')) {
     try {
       const { resolveSrv, resolveTxt } = await import('node:dns/promises')
       const url = new URL(uri.replace('mongodb+srv://', 'mongodb://'))
-      const hostname = url.hostname
-      const srvRecords = await resolveSrv(`_mongodb._tcp.${hostname}`)
+      const srvRecords = await resolveSrv(`_mongodb._tcp.${url.hostname}`)
       let txtRecord = ''
-      try {
-        const txtResults = await resolveTxt(hostname)
-        txtRecord = txtResults.flat().join('')
-      } catch (_) { /* optional */ }
+      try { const r = await resolveTxt(url.hostname); txtRecord = r.flat().join('') } catch (_) {}
       const hosts = srvRecords.map(r => `${r.name}:${r.port}`).join(',')
       const userPass = url.username && url.password ? `${url.username}:${url.password}@` : ''
       const dbName = url.pathname.replace('/', '')
@@ -139,43 +96,64 @@ export async function connectDB() {
       if (!params.has('ssl')) params.set('ssl', 'true')
       if (!params.has('authSource')) params.set('authSource', 'admin')
       const stdUri = `mongodb://${userPass}${hosts}/${dbName}?${params.toString()}`
-      console.log(`Converted to standard URI: ${maskURI(stdUri)}`)
+      console.log(`Converted URI: ${maskURI(stdUri)}`)
       urisToTry.unshift(stdUri)
     } catch (err) {
-      console.warn(`SRV resolution failed: ${err.message}`)
+      console.warn(`SRV conversion failed: ${err.message}`)
     }
-
     const fallback = buildFallbackURI(uri)
     if (fallback) {
-      console.log(`Hardcoded fallback URI: ${maskURI(fallback)}`)
+      console.log(`Fallback URI: ${maskURI(fallback)}`)
       urisToTry.push(fallback)
     }
   }
 
-  // Try each URI with connection options
+  // Try each URI: first with raw MongoClient, then fallback to mongoose
   for (const tryUri of urisToTry) {
+    // Try raw MongoDB driver first (bypasses Mongoose)
     try {
-      mongoose.connection.on('connected', () => { isConnected = true; console.log('MongoDB connected') })
-      mongoose.connection.on('disconnected', () => { isConnected = false })
-      mongoose.connection.on('error', (err) => console.error('MongoDB error:', err.message))
-
+      console.log(`Trying MongoClient with: ${maskURI(tryUri)}`)
+      const client = await tryMongoConnect(tryUri)
+      console.log('MongoClient connected!')
+      // Now initialize Mongoose using the same connection
       await mongoose.connect(tryUri, {
-        serverSelectionTimeoutMS: 60000,
-        connectTimeoutMS: 60000,
-        socketTimeoutMS: 120000,
+        serverSelectionTimeoutMS: 30000,
+        connectTimeoutMS: 30000,
+        socketTimeoutMS: 60000,
         family: 4,
+        tls: true,
         tlsInsecure: true,
       })
-
-      console.log('Mongoose initial connection established')
+      await client.close()
+      isConnected = true
+      console.log('MongoDB connected (via Mongoose)')
       return
     } catch (error) {
-      console.error(`Connection failed with URI ${maskURI(tryUri)}: ${error.message}`)
+      console.error(`MongoClient failed with ${maskURI(tryUri)}: ${error.message}`)
+    }
+
+    // Fallback: try mongoose directly
+    try {
+      console.log(`Trying Mongoose with: ${maskURI(tryUri)}`)
+      mongoose.connection.on('connected', () => { isConnected = true; console.log('MongoDB connected') })
+      mongoose.connection.on('disconnected', () => { isConnected = false })
+      await mongoose.connect(tryUri, {
+        serverSelectionTimeoutMS: 30000,
+        connectTimeoutMS: 30000,
+        socketTimeoutMS: 60000,
+        family: 4,
+        tls: true,
+        tlsInsecure: true,
+      })
+      console.log('Mongoose connected')
+      return
+    } catch (error) {
+      console.error(`Mongoose failed with ${maskURI(tryUri)}: ${error.message}`)
       try { await mongoose.disconnect() } catch (_) {}
     }
   }
 
-  console.warn('All MongoDB connection attempts failed. Server will start without database.')
+  console.warn('All MongoDB connection attempts failed.')
 }
 
 export function getDBStatus() {
