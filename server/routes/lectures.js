@@ -1,22 +1,15 @@
 import { Router } from 'express'
-import Lecture from '../models/Lecture.js'
-import LectureRegistration from '../models/LectureRegistration.js'
+import store from '../store.js'
 import { protect } from '../middleware/auth.js'
 
 const router = Router()
 
 router.get('/', protect, async (req, res, next) => {
   try {
-    const lectures = await Lecture.find({ isActive: true }).sort({ day: 1, time: 1 })
-
-    const registered = await LectureRegistration.find({ studentId: req.user.studentId })
-    const registeredIds = new Set(registered.map((r) => r.lectureId.toString()))
-
-    const result = lectures.map((l) => ({
-      ...l.toObject(),
-      registered: registeredIds.has(l._id.toString()),
-    }))
-
+    const lectures = store.lectures.find({ isActive: true }).sort({ day: 1, time: 1 })
+    const registered = store.lectureRegistrations.find({ studentId: req.user.studentId })
+    const registeredIds = new Set(registered.map((r) => r.lectureId))
+    const result = lectures.map((l) => ({ ...l, registered: registeredIds.has(l._id) }))
     res.json(result)
   } catch (error) {
     next(error)
@@ -25,24 +18,20 @@ router.get('/', protect, async (req, res, next) => {
 
 router.post('/:id/register', protect, async (req, res, next) => {
   try {
-    const lecture = await Lecture.findById(req.params.id)
+    const lecture = store.lectures.findOne({ _id: req.params.id })
     if (!lecture) return res.status(404).json({ message: 'Lecture not found' })
 
-    const existing = await LectureRegistration.findOne({
+    const existing = store.lectureRegistrations.findOne({
       studentId: req.user.studentId,
-      lectureId: lecture._id,
+      lectureId: req.params.id,
     })
 
     if (existing) {
-      await LectureRegistration.deleteOne({ _id: existing._id })
+      store.lectureRegistrations.deleteOne({ _id: existing._id })
       return res.json({ registered: false, message: 'Unregistered successfully' })
     }
 
-    await LectureRegistration.create({
-      studentId: req.user.studentId,
-      lectureId: lecture._id,
-    })
-
+    store.lectureRegistrations.create({ studentId: req.user.studentId, lectureId: req.params.id })
     res.json({ registered: true, message: 'Registered successfully' })
   } catch (error) {
     next(error)

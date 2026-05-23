@@ -1,22 +1,15 @@
 import { Router } from 'express'
-import Course from '../models/Course.js'
-import Enrollment from '../models/Enrollment.js'
+import store from '../store.js'
 import { protect } from '../middleware/auth.js'
 
 const router = Router()
 
 router.get('/', protect, async (req, res, next) => {
   try {
-    const courses = await Course.find({ isActive: true }).sort({ semester: 1, code: 1 })
-
-    const enrolled = await Enrollment.find({ studentId: req.user.studentId })
-    const enrolledCourseIds = new Set(enrolled.map((e) => e.courseId.toString()))
-
-    const result = courses.map((c) => ({
-      ...c.toObject(),
-      registered: enrolledCourseIds.has(c._id.toString()),
-    }))
-
+    const courses = store.courses.find({ isActive: true }).sort({ semester: 1, code: 1 })
+    const enrolled = store.enrollments.find({ studentId: req.user.studentId })
+    const enrolledCourseIds = new Set(enrolled.map((e) => e.courseId))
+    const result = courses.map((c) => ({ ...c, registered: enrolledCourseIds.has(c._id) }))
     res.json(result)
   } catch (error) {
     next(error)
@@ -25,31 +18,31 @@ router.get('/', protect, async (req, res, next) => {
 
 router.post('/:id/register', protect, async (req, res, next) => {
   try {
-    const course = await Course.findById(req.params.id)
+    const course = store.courses.findOne({ _id: req.params.id })
     if (!course) return res.status(404).json({ message: 'Course not found' })
 
-    const existing = await Enrollment.findOne({
+    const existing = store.enrollments.findOne({
       studentId: req.user.studentId,
-      courseId: course._id,
+      courseId: req.params.id,
     })
 
     if (existing) {
-      await Enrollment.deleteOne({ _id: existing._id })
-      if (course.enrolled > 0) course.enrolled -= 1
-      await course.save()
+      store.enrollments.deleteOne({ _id: existing._id })
+      if (course.enrolled > 0) {
+        const c = store.courses.docs.find(d => d._id === course._id)
+        if (c) c.enrolled -= 1
+      }
       return res.json({ registered: false, message: 'Unregistered successfully' })
     }
 
-    if (course.enrolled >= course.capacity) {
+    const allCourses = store.courses.find({ isActive: true })
+    const courseDoc = allCourses.find(c => c._id === req.params.id)
+    if (courseDoc && courseDoc.enrolled >= courseDoc.capacity) {
       return res.status(400).json({ message: 'Course is full' })
     }
 
-    await Enrollment.create({
-      studentId: req.user.studentId,
-      courseId: course._id,
-    })
-    course.enrolled += 1
-    await course.save()
+    store.enrollments.create({ studentId: req.user.studentId, courseId: req.params.id })
+    if (courseDoc) courseDoc.enrolled += 1
 
     res.json({ registered: true, message: 'Registered successfully' })
   } catch (error) {
@@ -59,10 +52,10 @@ router.post('/:id/register', protect, async (req, res, next) => {
 
 router.get('/my', protect, async (req, res, next) => {
   try {
-    const enrolled = await Enrollment.find({ studentId: req.user.studentId })
+    const enrolled = store.enrollments.find({ studentId: req.user.studentId })
     const courseIds = enrolled.map((e) => e.courseId)
-    const courses = await Course.find({ _id: { $in: courseIds }, isActive: true })
-    res.json(courses.map((c) => ({ ...c.toObject(), registered: true })))
+    const courses = store.courses.find({ isActive: true }).filter(c => courseIds.includes(c._id))
+    res.json(courses.map((c) => ({ ...c, registered: true })))
   } catch (error) {
     next(error)
   }

@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken'
-import User from '../models/User.js'
+import store from '../store.js'
 
 export async function protect(req, res, next) {
   try {
@@ -13,8 +13,7 @@ export async function protect(req, res, next) {
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET)
-    const user = await User.findById(decoded.id).select('-password')
-
+    const user = store.users.findOne({ _id: decoded.id })
     if (!user || !user.isActive) {
       return res.status(401).json({ message: 'Not authorized, user not found' })
     }

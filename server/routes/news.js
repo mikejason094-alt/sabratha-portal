@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import News from '../models/News.js'
+import store from '../store.js'
 import { protect } from '../middleware/auth.js'
 
 const router = Router()
@@ -10,7 +10,7 @@ router.get('/', async (req, res, next) => {
     if (req.query.category && req.query.category !== 'all') {
       filter.category = req.query.category
     }
-    const news = await News.find(filter).sort({ date: -1 })
+    const news = store.news.find(filter).sort({ date: -1 })
     res.json(news)
   } catch (error) {
     next(error)
@@ -19,7 +19,7 @@ router.get('/', async (req, res, next) => {
 
 router.get('/:id', async (req, res, next) => {
   try {
-    const article = await News.findById(req.params.id)
+    const article = store.news.findOne({ _id: req.params.id })
     if (!article) return res.status(404).json({ message: 'News article not found' })
     res.json(article)
   } catch (error) {
