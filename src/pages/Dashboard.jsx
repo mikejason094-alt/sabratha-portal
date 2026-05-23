@@ -27,9 +27,9 @@ export default function Dashboard() {
       <h1 className="page-title">{t('dashboard.title')}</h1>
 
       {student && (
-        <div className="bg-gradient-to-r from-primary-500 to-primary-700 rounded-xl p-6 text-white mb-6">
+        <div className="bg-gradient-to-r from-primary-600 to-primary-800 rounded-2xl p-7 text-white mb-8 border border-primary-500/20 shadow-lg shadow-primary-900/20">
           <h2 className="text-xl font-bold">{t('dashboard.welcome', { name: isAr ? student.nameAr : student.nameEn })}</h2>
-          <p className="text-primary-200 mt-1">{t('dashboard.studentId')}: {student.id}</p>
+          <p className="text-primary-300/80 mt-1 text-sm">{t('dashboard.studentId')}: {student.id}</p>
         </div>
       )}
 
@@ -65,47 +65,47 @@ export default function Dashboard() {
         <div className="card">
           <div className="flex items-center justify-between mb-4">
             <h3 className="section-title mb-0">{t('dashboard.upcomingLectures')}</h3>
-            <Link to="/lectures" className="text-sm text-primary-500 hover:text-primary-600 font-medium">{t('dashboard.viewAll')}</Link>
+            <Link to="/lectures" className="text-sm text-primary-400 hover:text-primary-300 font-medium transition-colors">{t('dashboard.viewAll')}</Link>
           </div>
           {todayLectures.length > 0 ? (
-            <div className="space-y-3">
+            <div className="space-y-2">
               {todayLectures.map((lec) => (
-                <div key={lec.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                  <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <svg className="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div key={lec.id} className="flex items-center gap-3 p-3 bg-white/5 rounded-xl border border-white/5 hover:bg-white/[0.07] transition-colors">
+                  <div className="w-10 h-10 bg-primary-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <svg className="w-5 h-5 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-sm text-gray-900 truncate">{isAr ? lec.courseAr : lec.courseEn}</p>
-                    <p className="text-xs text-gray-500">{lec.time} — {lec.room}</p>
+                    <p className="font-medium text-sm text-zinc-100 truncate">{isAr ? lec.courseAr : lec.courseEn}</p>
+                    <p className="text-xs text-zinc-500">{lec.time} — {lec.room}</p>
                   </div>
                   <span className="badge-info text-xs">{isAr ? lec.dayAr : lec.dayEn}</span>
                 </div>
               ))}
             </div>
           ) : (
-            <p className="text-gray-400 text-sm py-8 text-center">{t('dashboard.noUpcoming')}</p>
+            <p className="text-zinc-600 text-sm py-8 text-center">{t('dashboard.noUpcoming')}</p>
           )}
         </div>
 
         <div className="card">
           <div className="flex items-center justify-between mb-4">
             <h3 className="section-title mb-0">{t('dashboard.recentNews')}</h3>
-            <Link to="/news" className="text-sm text-primary-500 hover:text-primary-600 font-medium">{t('dashboard.viewAll')}</Link>
+            <Link to="/news" className="text-sm text-primary-400 hover:text-primary-300 font-medium transition-colors">{t('dashboard.viewAll')}</Link>
           </div>
           {recentNews.length > 0 ? (
-            <div className="space-y-3">
+            <div className="space-y-2">
               {recentNews.map((article) => (
-                <Link key={article.id} to="/news" className="block p-3 rounded-lg hover:bg-gray-50 transition-colors">
-                  <p className="font-medium text-sm text-gray-900">{isAr ? article.titleAr : article.titleEn}</p>
-                  <p className="text-xs text-gray-500 mt-1 line-clamp-2">{isAr ? article.summaryAr : article.summaryEn}</p>
-                  <p className="text-xs text-gray-400 mt-1">{article.date}</p>
+                <Link key={article.id} to="/news" className="block p-3 rounded-xl bg-white/5 border border-white/5 hover:bg-white/[0.07] transition-colors">
+                  <p className="font-medium text-sm text-zinc-100">{isAr ? article.titleAr : article.titleEn}</p>
+                  <p className="text-xs text-zinc-500 mt-1 line-clamp-2">{isAr ? article.summaryAr : article.summaryEn}</p>
+                  <p className="text-xs text-zinc-600 mt-1">{article.date}</p>
                 </Link>
               ))}
             </div>
           ) : (
-            <p className="text-gray-400 text-sm py-8 text-center">{t('common.noData')}</p>
+            <p className="text-zinc-600 text-sm py-8 text-center">{t('common.noData')}</p>
           )}
         </div>
       </div>

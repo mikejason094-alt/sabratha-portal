@@ -30,42 +30,42 @@ export default function Semesters() {
                   <div className={`absolute left-2.5 w-4 h-4 rounded-full border-2 z-10
                     ${sem.status === 'completed' ? 'bg-green-500 border-green-500'
                     : sem.status === 'in-progress' ? 'bg-yellow-400 border-yellow-400 animate-pulse'
-                    : 'bg-white border-gray-300'}`} />
-                  <div className="card border-0 shadow-sm bg-gray-50 p-4">
+                    : 'bg-zinc-800 border-zinc-700'}`} />
+                  <div className="card p-4">
                     <div className="flex flex-wrap items-start justify-between gap-2">
                       <div>
                         <div className="flex items-center gap-2">
-                          <h3 className="font-semibold text-gray-900">{isAr ? sem.nameAr : sem.nameEn}</h3>
+                          <h3 className="font-semibold text-zinc-100">{isAr ? sem.nameAr : sem.nameEn}</h3>
                           <span className={`text-xs ${getStatusColor(sem.status)}`}>
                             {isAr ? statusLabel.ar : statusLabel.en}
                           </span>
                         </div>
-                        <p className="text-sm text-gray-500 mt-0.5">{sem.year}</p>
+                        <p className="text-sm text-zinc-500 mt-0.5">{sem.year}</p>
                       </div>
                       <div className="flex gap-4 text-sm">
                         <div className="text-center">
-                          <p className="font-bold text-gray-900">{sem.courses.length}</p>
-                          <p className="text-gray-500 text-xs">{t('semesters.courses')}</p>
+                          <p className="font-bold text-zinc-100">{sem.courses.length}</p>
+                          <p className="text-zinc-500 text-xs">{t('semesters.courses')}</p>
                         </div>
                         <div className="text-center">
-                          <p className="font-bold text-gray-900">{sem.credits}</p>
-                          <p className="text-gray-500 text-xs">{t('semesters.credits')}</p>
+                          <p className="font-bold text-zinc-100">{sem.credits}</p>
+                          <p className="text-zinc-500 text-xs">{t('semesters.credits')}</p>
                         </div>
                         <div className="text-center">
-                          <p className="font-bold text-primary-600">{sem.gpa?.toFixed(2) || '-'}</p>
-                          <p className="text-gray-500 text-xs">{t('semesters.gpa')}</p>
+                          <p className="font-bold text-primary-400">{sem.gpa?.toFixed(2) || '-'}</p>
+                          <p className="text-zinc-500 text-xs">{t('semesters.gpa')}</p>
                         </div>
                       </div>
                     </div>
 
                     {sem.courses.length > 0 && (
-                      <div className="mt-3 pt-3 border-t border-gray-200">
+                      <div className="mt-3 pt-3 border-t border-white/5">
                         <div className="flex flex-wrap gap-2">
                           {sem.courses.map((c, ci) => (
-                            <span key={ci} className="inline-flex items-center gap-1 px-2 py-1 bg-white rounded text-xs text-gray-700 border border-gray-200">
-                              <span className="font-mono text-gray-400">{c.code}</span>
+                            <span key={ci} className="inline-flex items-center gap-1 px-2 py-1 bg-zinc-800 rounded text-xs text-zinc-300 border border-white/5">
+                              <span className="font-mono text-zinc-500">{c.code}</span>
                               {isAr ? c.nameAr : c.nameEn}
-                              {c.grade && <span className={`font-semibold ml-1 ${c.grade.startsWith('A') ? 'text-green-600' : c.grade.startsWith('B') ? 'text-blue-600' : 'text-yellow-600'}`}>{c.grade}</span>}
+                              {c.grade && <span className={`font-semibold ml-1 ${c.grade.startsWith('A') ? 'text-green-400' : c.grade.startsWith('B') ? 'text-blue-400' : 'text-yellow-400'}`}>{c.grade}</span>}
                             </span>
                           ))}
                         </div>

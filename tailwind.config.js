@@ -33,6 +33,20 @@ export default {
         sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
         arabic: ['Cairo', 'Noto Naskh Arabic', 'Traditional Arabic', 'serif'],
       },
+      keyframes: {
+        'fade-up': {
+          '0%': { opacity: '0', transform: 'translateY(30px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        'fade-in': {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+      },
+      animation: {
+        'fade-up': 'fade-up 0.8s ease-out forwards',
+        'fade-in': 'fade-in 1s ease-out forwards',
+      },
     },
   },
   plugins: [],

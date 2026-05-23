@@ -24,13 +24,13 @@ export default function News() {
       <h1 className="page-title">{t('news.title')}</h1>
 
       <div className="flex flex-wrap gap-2 mb-6">
-        <span className="text-sm text-gray-500 font-medium self-center">{t('news.categories')}:</span>
+        <span className="text-sm text-zinc-500 font-medium self-center">{t('news.categories')}:</span>
         {categories.map((cat) => (
           <button
             key={cat}
             onClick={() => setFilter(cat)}
             className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors
-              ${filter === cat ? 'bg-primary-500 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
+              ${filter === cat ? 'bg-primary-500 text-white' : 'bg-white/5 text-zinc-400 hover:bg-white/10 hover:text-zinc-300'}`}>
             {cat === 'all' ? t('news.all') : isAr && cat === 'announcement' ? 'إعلانات' : cat === 'announcement' ? 'Announcements'
             : isAr && cat === 'event' ? 'فعاليات' : cat === 'event' ? 'Events' : cat}
           </button>
@@ -45,8 +45,8 @@ export default function News() {
             return (
               <div key={article.id} className="card">
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-lg bg-primary-100 flex items-center justify-center flex-shrink-0">
-                    <svg className="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="w-12 h-12 rounded-xl bg-primary-500/20 flex items-center justify-center flex-shrink-0">
+                    <svg className="w-6 h-6 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       {article.category === 'event' ? (
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       ) : (
@@ -59,17 +59,17 @@ export default function News() {
                       <span className={`text-xs ${getCategoryColor(article.category)}`}>
                         {isAr ? catLabel.ar : catLabel.en}
                       </span>
-                      <span className="text-xs text-gray-400">{article.date}</span>
+                      <span className="text-xs text-zinc-500">{article.date}</span>
                     </div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-1">{isAr ? article.titleAr : article.titleEn}</h3>
-                    <p className="text-sm text-gray-600">
+                    <h3 className="text-lg font-semibold text-zinc-100 mb-1">{isAr ? article.titleAr : article.titleEn}</h3>
+                    <p className="text-sm text-zinc-400">
                       {isExpanded ? (isAr ? article.contentAr : article.contentEn) : (isAr ? article.summaryAr : article.summaryEn)}
                     </p>
                     <div className="flex items-center justify-between mt-3">
-                      <span className="text-xs text-gray-400">{article.author}</span>
+                      <span className="text-xs text-zinc-500">{article.author}</span>
                       <button
                         onClick={() => setExpanded(isExpanded ? null : article.id)}
-                        className="text-sm text-primary-500 hover:text-primary-600 font-medium">
+                        className="text-sm text-primary-400 hover:text-primary-300 font-medium transition-colors">
                         {isExpanded ? t('common.close') : t('news.readMore')}
                       </button>
                     </div>
@@ -81,7 +81,7 @@ export default function News() {
         </div>
       ) : (
         <div className="card text-center py-12">
-          <p className="text-gray-400">{t('news.noNews')}</p>
+          <p className="text-zinc-500">{t('news.noNews')}</p>
         </div>
       )}
     </div>

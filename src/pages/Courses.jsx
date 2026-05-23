@@ -44,7 +44,7 @@ export default function Courses() {
           <h3 className="section-title">{t('courses.myCourses')} ({myCourses.length})</h3>
           <div className="flex flex-wrap gap-2">
             {myCourses.map((c) => (
-              <span key={c.id} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-50 text-green-700 rounded-full text-sm font-medium border border-green-200">
+              <span key={c.id} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-500/10 text-green-400 rounded-full text-sm font-medium border border-green-500/20">
                 <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
@@ -67,7 +67,7 @@ export default function Courses() {
             />
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-500">{t('courses.filter')}:</span>
+            <span className="text-sm text-zinc-400">{t('courses.filter')}:</span>
             <select value={filterSem} onChange={(e) => setFilterSem(e.target.value)} className="input-field w-auto text-sm">
               <option value="all">{t('courses.all')}</option>
               {semesters.map((s) => (
@@ -81,22 +81,22 @@ export default function Courses() {
       {filtered.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {filtered.map((course) => (
-            <div key={course.id} className={`card flex flex-col ${course.registered ? 'border-green-200 bg-green-50/30' : ''}`}>
+            <div key={course.id} className={`card flex flex-col ${course.registered ? 'border-green-500/20 bg-green-500/5' : ''}`}>
               <div className="flex items-start justify-between mb-3">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-mono text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">{course.code}</span>
-                    <span className="text-xs text-gray-400">{course.credits} {t('courses.credits')}</span>
+                    <span className="text-xs font-mono text-zinc-500 bg-zinc-800 px-1.5 py-0.5 rounded">{course.code}</span>
+                    <span className="text-xs text-zinc-500">{course.credits} {t('courses.credits')}</span>
                   </div>
-                  <h3 className="font-semibold text-gray-900 mt-1">{isAr ? course.nameAr : course.nameEn}</h3>
+                  <h3 className="font-semibold text-zinc-100 mt-1">{isAr ? course.nameAr : course.nameEn}</h3>
                 </div>
               </div>
-              <div className="space-y-1.5 text-sm text-gray-600 flex-1">
-                <p><span className="text-gray-400">{t('courses.instructor')}:</span> {isAr ? course.instructorAr : course.instructorEn}</p>
-                <p><span className="text-gray-400">{t('courses.schedule')}:</span> {isAr ? course.scheduleAr : course.scheduleEn}</p>
-                <p><span className="text-gray-400">{t('courses.room')}:</span> {course.room}</p>
+              <div className="space-y-1.5 text-sm text-zinc-400 flex-1">
+                <p><span className="text-zinc-500">{t('courses.instructor')}:</span> {isAr ? course.instructorAr : course.instructorEn}</p>
+                <p><span className="text-zinc-500">{t('courses.schedule')}:</span> {isAr ? course.scheduleAr : course.scheduleEn}</p>
+                <p><span className="text-zinc-500">{t('courses.room')}:</span> {course.room}</p>
                 <p>
-                  <span className="text-gray-400">{t('courses.capacity')}:</span> {course.enrolled}/{course.capacity}
+                  <span className="text-zinc-500">{t('courses.capacity')}:</span> {course.enrolled}/{course.capacity}
                   <span className="ml-2 text-xs">
                     {course.enrolled >= course.capacity ? <span className="badge-danger">{t('courses.full')}</span>
                     : `${course.capacity - course.enrolled} ${t('courses.capacity').toLowerCase()}`}
@@ -108,7 +108,7 @@ export default function Courses() {
                 disabled={toggling === course.id}
                 className={`mt-4 w-full py-2 rounded-lg text-sm font-medium transition-colors
                   ${course.registered
-                    ? 'bg-red-50 text-red-600 hover:bg-red-100 border border-red-200'
+                    ? 'bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/20'
                     : 'btn-primary'}`}>
                 {toggling === course.id ? (
                   <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -119,7 +119,7 @@ export default function Courses() {
         </div>
       ) : (
         <div className="card text-center py-12">
-          <p className="text-gray-400">{t('courses.noCourses')}</p>
+          <p className="text-zinc-500">{t('courses.noCourses')}</p>
         </div>
       )}
     </div>

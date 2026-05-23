@@ -37,15 +37,15 @@ export default function TeacherDashboard() {
       <div className="card">
         <h2 className="section-title">{isAr ? 'مقرراتي الدراسية' : 'My Courses'}</h2>
         {(!courses || courses.length === 0) ? (
-          <p className="text-gray-400 text-sm py-8 text-center">{t('common.noData')}</p>
+          <p className="text-zinc-500 text-sm py-8 text-center">{t('common.noData')}</p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
             {courses.map((course) => (
               <Link key={course._id} to={`/courses/${course._id}`}
-                className="block p-4 rounded-lg border border-gray-200 hover:border-primary-300 hover:shadow-sm transition-all">
-                <h3 className="font-semibold text-gray-900">{isAr ? course.nameAr : course.nameEn}</h3>
-                <p className="text-sm text-gray-500 mt-1">{course.code}</p>
-                <div className="flex items-center gap-4 mt-3 text-xs text-gray-400">
+                className="block p-4 rounded-xl bg-white/5 border border-white/5 hover:border-primary-500/20 hover:bg-white/[0.07] transition-all">
+                <h3 className="font-semibold text-zinc-100">{isAr ? course.nameAr : course.nameEn}</h3>
+                <p className="text-sm text-zinc-500 mt-1">{course.code}</p>
+                <div className="flex items-center gap-4 mt-3 text-xs text-zinc-500">
                   <span>{isAr ? 'السعة:' : 'Capacity:'} {course.enrolled}/{course.capacity}</span>
                   <span>{course.scheduleEn}</span>
                   <span>{course.room}</span>

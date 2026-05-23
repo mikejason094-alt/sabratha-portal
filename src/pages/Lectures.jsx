@@ -42,7 +42,7 @@ export default function Lectures() {
             {uniqueRegisteredCourses.map((code) => {
               const lec = lectures?.find((l) => l.courseCode === code)
               return (
-                <span key={code} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary-50 text-primary-700 rounded-full text-sm font-medium border border-primary-200">
+                <span key={code} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary-500/10 text-primary-400 rounded-full text-sm font-medium border border-primary-500/20">
                   <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
@@ -66,7 +66,7 @@ export default function Lectures() {
                 key={day}
                 onClick={() => setActiveDay(idx + 1)}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors
-                  ${isActive ? 'bg-primary-500 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
+                  ${isActive ? 'bg-primary-500 text-white' : 'bg-white/5 text-zinc-400 hover:bg-white/10 hover:text-zinc-300'}`}>
                 {isAr ? dayLabelsAr[idx] : dayLabelsEn[idx]}
               </button>
             )
@@ -76,24 +76,24 @@ export default function Lectures() {
         {dayLectures.length > 0 ? (
           <div className="space-y-3">
             {dayLectures.map((lec) => (
-              <div key={lec.id} className="flex items-center gap-4 p-4 rounded-lg border border-gray-200 hover:border-primary-200 transition-colors">
-                <div className="w-12 h-12 bg-accent-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <svg className="w-6 h-6 text-accent-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div key={lec.id} className="flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/5 hover:border-primary-500/20 transition-colors">
+                <div className="w-12 h-12 bg-accent-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <svg className="w-6 h-6 text-accent-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-gray-900">{isAr ? lec.courseAr : lec.courseEn}</p>
-                  <p className="text-sm text-gray-500">{lec.time} — {t('lectures.room')}: {lec.room}</p>
-                  <p className="text-xs text-gray-400 mt-0.5">{isAr ? lec.instructorAr : lec.instructorEn}</p>
+                  <p className="font-semibold text-zinc-100">{isAr ? lec.courseAr : lec.courseEn}</p>
+                  <p className="text-sm text-zinc-500">{lec.time} — {t('lectures.room')}: {lec.room}</p>
+                  <p className="text-xs text-zinc-600 mt-0.5">{isAr ? lec.instructorAr : lec.instructorEn}</p>
                 </div>
                 <button
                   onClick={() => handleToggle(lec.id)}
                   disabled={toggling === lec.id}
                   className={`flex-shrink-0 px-4 py-2 rounded-lg text-sm font-medium transition-colors
                     ${lec.registered
-                      ? 'bg-red-50 text-red-600 border border-red-200 hover:bg-red-100'
-                      : 'bg-primary-50 text-primary-600 border border-primary-200 hover:bg-primary-100'}`}>
+                      ? 'bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20'
+                      : 'bg-primary-500/10 text-primary-300 border border-primary-500/20 hover:bg-primary-500/20'}`}>
                   {toggling === lec.id ? (
                     <span className="inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
                   ) : lec.registered ? t('lectures.registered') : t('lectures.register')}
@@ -102,7 +102,7 @@ export default function Lectures() {
             ))}
           </div>
         ) : (
-          <p className="text-center py-8 text-gray-400">{t('lectures.noLectures')}</p>
+          <p className="text-center py-8 text-zinc-500">{t('lectures.noLectures')}</p>
         )}
       </div>
     </div>

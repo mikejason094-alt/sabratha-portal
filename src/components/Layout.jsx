@@ -30,45 +30,46 @@ export default function Layout({ children }) {
   const navItems = isTeacher ? teacherNav : studentNav
 
   return (
-    <div className="min-h-screen flex flex-col" dir={dir}>
-      <header className="bg-primary-500 text-white shadow-lg sticky top-0 z-50">
+    <div className="min-h-screen flex flex-col bg-zinc-950 text-zinc-100" dir={dir}>
+      {/* Header */}
+      <header className="bg-zinc-900/80 backdrop-blur-xl border-b border-white/5 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-3">
-              <button className="lg:hidden p-2 rounded-lg hover:bg-primary-600" onClick={() => setSidebarOpen(!sidebarOpen)}>
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <button className="lg:hidden p-2 rounded-xl hover:bg-white/5 transition-colors" onClick={() => setSidebarOpen(!sidebarOpen)}>
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={sidebarOpen ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16M4 18h16'} />
                 </svg>
               </button>
-              <div className="w-10 h-10 bg-accent-500 rounded-lg flex items-center justify-center font-bold text-primary-900 text-lg">
+              <div className="w-9 h-9 bg-accent-500 rounded-xl flex items-center justify-center font-bold text-zinc-950 text-base shadow-lg shadow-accent-500/20">
                 {lang === 'ar' ? 'م' : 'S'}
               </div>
               <div className="hidden sm:block">
-                <h1 className="font-bold text-lg leading-tight">{t('header.instituteShort')}</h1>
-                <p className="text-xs text-primary-200">{isTeacher ? (lang === 'ar' ? 'بوابة المدرس' : 'Teacher Portal') : t('header.studentPortal')}</p>
+                <h1 className="font-bold text-base leading-tight text-zinc-100">{t('header.instituteShort')}</h1>
+                <p className="text-xs text-zinc-500">{isTeacher ? (lang === 'ar' ? 'بوابة المدرس' : 'Teacher Portal') : t('header.studentPortal')}</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-4">
-              <button onClick={toggleLanguage} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary-600 hover:bg-primary-700 text-sm font-medium transition-colors">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="flex items-center gap-3">
+              <button onClick={toggleLanguage} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-zinc-300 text-sm font-medium transition-all duration-200 border border-white/5">
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                {lang === 'en' ? 'العربية' : 'English'}
+                {lang === 'en' ? 'AR' : 'EN'}
               </button>
-              <button onClick={() => { logout(); navigate('/login') }} className="p-2 rounded-lg hover:bg-primary-600 transition-colors" title="Logout">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <button onClick={() => { logout(); navigate('/login') }} className="p-2 rounded-xl hover:bg-white/5 transition-colors text-zinc-500 hover:text-zinc-300" title="Logout">
+                <svg className="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{width:18,height:18}}>
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                 </svg>
               </button>
               {user && (
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-full bg-primary-400 flex items-center justify-center text-sm font-bold">
+                  <div className="w-8 h-8 rounded-xl bg-primary-500/20 text-primary-300 flex items-center justify-center text-xs font-bold ring-2 ring-primary-500/30">
                     {lang === 'ar'
                       ? (student?.nameAr || user?.nameAr || '?').charAt(0)
                       : (student?.nameEn || user?.nameEn || '?').charAt(0)}
                   </div>
-                  <span className="hidden md:block text-sm font-medium">
+                  <span className="hidden md:block text-sm font-medium text-zinc-300 max-w-[120px] truncate">
                     {lang === 'ar'
                       ? (student?.nameAr || user?.nameAr || '')
                       : (student?.nameEn || user?.nameEn || '')}
@@ -81,14 +82,17 @@ export default function Layout({ children }) {
       </header>
 
       <div className="flex flex-1 max-w-7xl mx-auto w-full">
-        <aside className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 fixed lg:sticky top-16 left-0 h-[calc(100vh-4rem)] w-64 bg-white border-r border-gray-200 shadow-sm z-40 transition-transform duration-200 overflow-y-auto`}>
+        {/* Sidebar */}
+        <aside className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 fixed lg:sticky top-16 left-0 h-[calc(100vh-4rem)] w-64 bg-zinc-900/50 backdrop-blur-xl border-r border-white/5 shadow-2xl z-40 transition-transform duration-300 overflow-y-auto`}>
           <nav className="p-3 space-y-1">
             {navItems.map((item) => {
               const isActive = location.pathname === item.path
               return (
                 <Link key={item.path} to={item.path} onClick={() => setSidebarOpen(false)}
-                  className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors
-                    ${isActive ? 'bg-primary-50 text-primary-600 border-r-2 border-primary-500' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}`}>
+                  className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200
+                    ${isActive
+                      ? 'bg-primary-500/15 text-primary-300 border border-primary-500/20 shadow-sm'
+                      : 'text-zinc-500 hover:bg-white/5 hover:text-zinc-300'}`}>
                   <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={item.icon} />
                   </svg>
@@ -96,9 +100,9 @@ export default function Layout({ children }) {
                 </Link>
               )
             })}
-            <div className="pt-4 mt-4 border-t border-gray-200">
+            <div className="pt-4 mt-4 border-t border-white/5">
               <button onClick={() => { logout(); navigate('/login') }}
-                className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-gray-500 hover:bg-red-50 hover:text-red-600 w-full transition-colors">
+                className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-zinc-500 hover:bg-red-500/10 hover:text-red-400 w-full transition-all duration-200">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                 </svg>
@@ -108,15 +112,17 @@ export default function Layout({ children }) {
           </nav>
         </aside>
 
-        {sidebarOpen && <div className="fixed inset-0 bg-black/30 z-30 lg:hidden" onClick={() => setSidebarOpen(false)} />}
+        {sidebarOpen && <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-30 lg:hidden" onClick={() => setSidebarOpen(false)} />}
 
-        <main className="flex-1 p-4 md:p-6 lg:p-8 min-h-[calc(100vh-4rem)] overflow-x-hidden">
+        {/* Main Content */}
+        <main className="flex-1 p-4 md:p-6 lg:p-8 min-h-[calc(100vh-4rem)] overflow-x-auto">
           {children}
         </main>
       </div>
 
-      <footer className="bg-white border-t border-gray-200 py-4 text-center text-sm text-gray-500">
-        <p>&copy; {new Date().getFullYear()} {t('header.instituteName')} — {t('header.studentPortal')}</p>
+      {/* Footer */}
+      <footer className="bg-zinc-900/50 backdrop-blur-xl border-t border-white/5 py-4 text-center text-sm text-zinc-600">
+        <p>&copy; {new Date().getFullYear()} HIST Sabratha — {t('header.studentPortal')}</p>
       </footer>
     </div>
   )

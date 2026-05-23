@@ -1,18 +1,18 @@
 export function getGradeColor(grade) {
-  if (!grade) return 'text-gray-400'
+  if (!grade) return 'text-zinc-500'
   const num = parseFloat(grade)
-  if (num >= 3.7) return 'text-green-600'
-  if (num >= 3.0) return 'text-blue-600'
-  if (num >= 2.0) return 'text-yellow-600'
-  return 'text-red-600'
+  if (num >= 3.7) return 'text-green-400'
+  if (num >= 3.0) return 'text-blue-400'
+  if (num >= 2.0) return 'text-yellow-400'
+  return 'text-red-400'
 }
 
 export function getLetterGradeColor(grade) {
-  if (!grade) return 'text-gray-400'
-  if (grade.startsWith('A')) return 'text-green-600 bg-green-50'
-  if (grade.startsWith('B')) return 'text-blue-600 bg-blue-50'
-  if (grade.startsWith('C')) return 'text-yellow-600 bg-yellow-50'
-  return 'text-red-600 bg-red-50'
+  if (!grade) return 'text-zinc-500'
+  if (grade.startsWith('A')) return 'text-green-400 bg-green-500/10'
+  if (grade.startsWith('B')) return 'text-blue-400 bg-blue-500/10'
+  if (grade.startsWith('C')) return 'text-yellow-400 bg-yellow-500/10'
+  return 'text-red-400 bg-red-500/10'
 }
 
 export function getStatusColor(status) {

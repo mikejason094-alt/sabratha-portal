@@ -118,7 +118,7 @@ export default function TeacherCourseDetail() {
   }
 
   if (loading) return <Loading />
-  if (!course) return <p className="text-gray-500 text-center py-12">{t('common.noData')}</p>
+  if (!course) return <p className="text-zinc-500 text-center py-12">{t('common.noData')}</p>
 
   const tabs = [
     { id: 'students', label: isAr ? 'الطلاب' : 'Students' },
@@ -128,27 +128,27 @@ export default function TeacherCourseDetail() {
   return (
     <div>
       <div className="flex items-center gap-3 mb-4">
-        <Link to="/" className="text-primary-500 hover:text-primary-600">
+        <Link to="/" className="text-primary-400 hover:text-primary-300 transition-colors">
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
         </Link>
         <div>
           <h1 className="page-title mb-0">{isAr ? course.nameAr : course.nameEn}</h1>
-          <p className="text-sm text-gray-500">{course.code} — {course.scheduleEn} — {course.room}</p>
+          <p className="text-sm text-zinc-500">{course.code} — {course.scheduleEn} — {course.room}</p>
         </div>
       </div>
 
       {message && (
-        <div className={`px-4 py-2 rounded-lg text-sm mb-4 ${message.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-600'}`}>
+        <div className={`px-4 py-2.5 rounded-xl text-sm mb-4 ${message.type === 'success' ? 'bg-green-500/10 text-green-400 border border-green-500/20' : 'bg-red-500/10 text-red-400 border border-red-500/20'}`}>
           {message.text}
         </div>
       )}
 
-      <div className="flex gap-1 mb-4 border-b border-gray-200">
+      <div className="flex gap-1 mb-4 border-b border-white/5">
         {tabs.map(tab => (
           <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${activeTab === tab.id ? 'border-primary-500 text-primary-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}>
+            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${activeTab === tab.id ? 'border-primary-400 text-primary-300' : 'border-transparent text-zinc-500 hover:text-zinc-300'}`}>
             {tab.label}
           </button>
         ))}
@@ -158,26 +158,26 @@ export default function TeacherCourseDetail() {
         <div className="card">
           <h2 className="section-title">{isAr ? 'الطلاب المسجلون' : 'Enrolled Students'} ({students.length})</h2>
           {students.length === 0 ? (
-            <p className="text-gray-400 text-sm py-8 text-center">{t('common.noData')}</p>
+            <p className="text-zinc-500 text-sm py-8 text-center">{t('common.noData')}</p>
           ) : (
             <div className="overflow-x-auto mt-4">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-gray-200 text-left">
-                    <th className="pb-2 font-medium text-gray-500">{isAr ? 'الاسم' : 'Name'}</th>
-                    <th className="pb-2 font-medium text-gray-500">{isAr ? 'المعرف' : 'ID'}</th>
-                    <th className="pb-2 font-medium text-gray-500">{isAr ? 'الدرجة' : 'Grade'}</th>
-                    <th className="pb-2 font-medium text-gray-500">{isAr ? 'النقاط' : 'Points'}</th>
-                    <th className="pb-2 font-medium text-gray-500">{isAr ? 'إجراء' : 'Action'}</th>
+                  <tr className="border-b border-white/5 text-left">
+                    <th className="pb-2 font-medium text-zinc-500">{isAr ? 'الاسم' : 'Name'}</th>
+                    <th className="pb-2 font-medium text-zinc-500">{isAr ? 'المعرف' : 'ID'}</th>
+                    <th className="pb-2 font-medium text-zinc-500">{isAr ? 'الدرجة' : 'Grade'}</th>
+                    <th className="pb-2 font-medium text-zinc-500">{isAr ? 'النقاط' : 'Points'}</th>
+                    <th className="pb-2 font-medium text-zinc-500">{isAr ? 'إجراء' : 'Action'}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {students.map((student) => {
                     const g = getGrade(student.studentId)
                     return (
-                      <tr key={student.studentId} className="border-b border-gray-100">
-                        <td className="py-2 text-gray-900">{isAr ? student.nameAr : student.nameEn}</td>
-                        <td className="py-2 text-gray-500">{student.studentId}</td>
+                      <tr key={student.studentId} className="border-b border-white/5">
+                        <td className="py-2 text-zinc-100">{isAr ? student.nameAr : student.nameEn}</td>
+                        <td className="py-2 text-zinc-500">{student.studentId}</td>
                         <td className="py-2">
                           {editingStudent?.studentId === student.studentId ? (
                             <select value={gradeForm.grade}
@@ -190,10 +190,10 @@ export default function TeacherCourseDetail() {
                               {GRADE_OPTIONS.map(o => <option key={o.grade} value={o.grade}>{o.grade}</option>)}
                             </select>
                           ) : (
-                            <span className={g?.grade ? 'font-medium' : 'text-gray-400'}>{g?.grade || '-'}</span>
+                            <span className={g?.grade ? 'font-medium text-zinc-200' : 'text-zinc-600'}>{g?.grade || '-'}</span>
                           )}
                         </td>
-                        <td className="py-2 text-gray-600">{g?.points ?? '-'}</td>
+                        <td className="py-2 text-zinc-400">{g?.points ?? '-'}</td>
                         <td className="py-2">
                           {editingStudent?.studentId === student.studentId ? (
                             <div className="flex gap-1">
@@ -202,13 +202,13 @@ export default function TeacherCourseDetail() {
                                 {saving ? '...' : isAr ? 'حفظ' : 'Save'}
                               </button>
                               <button onClick={() => setEditingStudent(null)}
-                                className="text-xs px-2 py-1 bg-gray-200 text-gray-600 rounded hover:bg-gray-300">
+                                className="text-xs px-2 py-1 bg-zinc-800 text-zinc-400 rounded hover:bg-zinc-700 transition-colors">
                                 {isAr ? 'إلغاء' : 'Cancel'}
                               </button>
                             </div>
                           ) : (
                             <button onClick={() => startEdit(student)}
-                              className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+                              className="text-xs px-2 py-1 bg-white/5 text-zinc-400 rounded hover:bg-white/10 transition-colors">
                               {isAr ? 'تعديل' : 'Edit'}
                             </button>
                           )}
@@ -234,38 +234,26 @@ export default function TeacherCourseDetail() {
           </div>
 
           {showExamForm && (
-            <form onSubmit={createExam} className="card mb-4 p-4 border border-primary-200 bg-primary-50">
+            <form onSubmit={createExam} className="card mb-4 p-4 border border-primary-500/20 bg-primary-500/5">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">{isAr ? 'العنوان (إنجليزي)' : 'Title (English)'}</label>
+                  <label className="block text-xs font-medium text-zinc-400 mb-1">{isAr ? 'العنوان (إنجليزي)' : 'Title (English)'}</label>
                   <input value={examForm.titleEn} onChange={e => setExamForm({ ...examForm, titleEn: e.target.value })} className="input-field text-sm" required />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">{isAr ? 'العنوان (عربي)' : 'Title (Arabic)'}</label>
+                  <label className="block text-xs font-medium text-zinc-400 mb-1">{isAr ? 'العنوان (عربي)' : 'Title (Arabic)'}</label>
                   <input value={examForm.titleAr} onChange={e => setExamForm({ ...examForm, titleAr: e.target.value })} className="input-field text-sm" />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">{isAr ? 'التاريخ' : 'Date'}</label>
+                  <label className="block text-xs font-medium text-zinc-400 mb-1">{isAr ? 'التاريخ' : 'Date'}</label>
                   <input type="date" value={examForm.date} onChange={e => setExamForm({ ...examForm, date: e.target.value })} className="input-field text-sm" required />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">{isAr ? 'الوقت' : 'Time'}</label>
-                  <input type="time" value={examForm.time} onChange={e => setExamForm({ ...examForm, time: e.target.value })} className="input-field text-sm" />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">{isAr ? 'المدة (دقائق)' : 'Duration (min)'}</label>
-                  <input type="number" value={examForm.duration} onChange={e => setExamForm({ ...examForm, duration: parseInt(e.target.value) })} className="input-field text-sm" />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">{isAr ? 'القاعة' : 'Room'}</label>
-                  <input value={examForm.room} onChange={e => setExamForm({ ...examForm, room: e.target.value })} className="input-field text-sm" />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">{isAr ? 'الدرجة القصوى' : 'Max Score'}</label>
-                  <input type="number" value={examForm.maxScore} onChange={e => setExamForm({ ...examForm, maxScore: parseInt(e.target.value) })} className="input-field text-sm" />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">{isAr ? 'النوع' : 'Type'}</label>
+                  <label className="block text-xs font-medium text-zinc-400 mb-1">{isAr ? 'الوقت' : 'Time'}</label>
+                  <label className="block text-xs font-medium text-zinc-400 mb-1">{isAr ? 'المدة (دقائق)' : 'Duration (min)'}</label>
+                  <label className="block text-xs font-medium text-zinc-400 mb-1">{isAr ? 'القاعة' : 'Room'}</label>
+                  <label className="block text-xs font-medium text-zinc-400 mb-1">{isAr ? 'الدرجة القصوى' : 'Max Score'}</label>
+                  <label className="block text-xs font-medium text-zinc-400 mb-1">{isAr ? 'النوع' : 'Type'}</label>
                   <select value={examForm.type} onChange={e => setExamForm({ ...examForm, type: e.target.value })} className="input-field text-sm">
                     <option value="quiz">{isAr ? 'اختبار قصير' : 'Quiz'}</option>
                     <option value="midterm">{isAr ? 'منتصف الفصل' : 'Midterm'}</option>
@@ -278,7 +266,7 @@ export default function TeacherCourseDetail() {
                 <button type="submit" disabled={examSaving} className="btn-primary text-sm py-1.5 px-4">
                   {examSaving ? '...' : isAr ? 'إنشاء' : 'Create'}
                 </button>
-                <button type="button" onClick={() => setShowExamForm(false)} className="text-sm py-1.5 px-4 bg-gray-200 text-gray-600 rounded hover:bg-gray-300">
+                <button type="button" onClick={() => setShowExamForm(false)} className="text-sm py-1.5 px-4 bg-zinc-800 text-zinc-400 rounded-xl hover:bg-zinc-700 transition-colors">
                   {isAr ? 'إلغاء' : 'Cancel'}
                 </button>
               </div>
@@ -286,16 +274,16 @@ export default function TeacherCourseDetail() {
           )}
 
           {exams.length === 0 && !showExamForm ? (
-            <p className="text-gray-400 text-sm py-8 text-center">{t('common.noData')}</p>
+            <p className="text-zinc-500 text-sm py-8 text-center">{t('common.noData')}</p>
           ) : (
             <div className="space-y-3">
               {exams.map(exam => (
                 <div key={exam._id} className="card flex items-center justify-between">
                   <div>
-                    <h3 className="font-medium text-gray-900">{isAr ? exam.titleAr || exam.titleEn : exam.titleEn}</h3>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <h3 className="font-medium text-zinc-100">{isAr ? exam.titleAr || exam.titleEn : exam.titleEn}</h3>
+                    <p className="text-xs text-zinc-500 mt-1">
                       {exam.date} {exam.time ? `- ${exam.time}` : ''} | {exam.duration}{isAr ? ' دقيقة' : ' min'} | {exam.room || '-'} | {isAr ? 'الدرجة:' : 'Score:'} {exam.maxScore}
-                      <span className="ml-2 px-1.5 py-0.5 bg-gray-100 rounded text-xs">{exam.type}</span>
+                      <span className="ml-2 px-1.5 py-0.5 bg-zinc-800 rounded text-xs text-zinc-400">{exam.type}</span>
                     </p>
                   </div>
                   <button onClick={() => deleteExam(exam._id)} className="text-red-500 hover:text-red-600 p-1" title={isAr ? 'حذف' : 'Delete'}>
