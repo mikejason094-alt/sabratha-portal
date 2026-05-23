@@ -11,13 +11,14 @@ function buildWhereClause(query, paramIndex) {
 
   for (const [key, val] of Object.entries(query)) {
     if (val && typeof val === 'object' && '$in' in val) {
+      if (val.$in.length === 0) continue
       const placeholders = val.$in.map((_, i) => `$${idx + i + 1}`).join(',')
       clauses.push(`data->>'${key}' IN (${placeholders})`)
       params.push(...val.$in.map(String))
       idx += val.$in.length
     } else {
-      clauses.push(`data @> $${idx + 1}`)
-      params.push({ [key]: val })
+      clauses.push(`data->>'${key}' = $${idx + 1}`)
+      params.push(String(val))
       idx++
     }
   }
