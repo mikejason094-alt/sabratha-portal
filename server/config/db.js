@@ -8,13 +8,17 @@ export async function connectDB() {
     console.warn('MONGODB_URI not set — running without database')
     return
   }
+  const masked = uri.replace(/\/\/([^:]+):([^@]+)@/, '//$1:***@')
+  console.log(`MONGODB_URI: ${masked}`)
+  console.log(`NODE_ENV: ${process.env.NODE_ENV}`)
   try {
-    const conn = await mongoose.connect(uri, { serverSelectionTimeoutMS: 5000 })
+    const conn = await mongoose.connect(uri, { serverSelectionTimeoutMS: 15000 })
     isConnected = true
     console.log(`MongoDB connected: ${conn.connection.host}`)
   } catch (error) {
     console.error(`MongoDB connection error: ${error.message}`)
-    console.warn('Server will start without database — API endpoints will return errors')
+    console.error('Connection string host:', uri.split('@')[1]?.split('/')[0] || 'unknown')
+    console.warn('Server will start without database')
   }
 }
 
