@@ -29,17 +29,26 @@ export default function Login() {
   const isAr = i18n.language === 'ar'
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-500 via-primary-700 to-primary-900 p-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-500 via-primary-700 to-primary-900 p-4 relative overflow-hidden">
+      {/* Decorative circles */}
+      <div className="absolute -top-40 -right-40 w-96 h-96 bg-primary-400/20 rounded-full blur-3xl" />
+      <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-accent-500/10 rounded-full blur-3xl" />
+
+      <div className="w-full max-w-md relative">
         <div className="text-center mb-8">
-          <div className="w-20 h-20 bg-accent-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-            <span className="text-3xl font-bold text-primary-900">{isAr ? 'م' : 'S'}</span>
+          <div className="w-28 h-28 mx-auto mb-4 rounded-2xl bg-primary-600 flex items-center justify-center p-2 shadow-2xl">
+            <img src="/images/logo.svg" alt="SITS Logo"
+              className="w-full h-full object-contain" />
           </div>
-          <h1 className="text-2xl font-bold text-white">{isAr ? 'معهد صبراتة للتقنية و العلوم التطبيقية' : 'Sabratha Institute of Technical Sciences'}</h1>
-          <p className="text-primary-200 mt-2">{isAr ? 'بوابة الدخول الموحدة' : 'Unified Portal'}</p>
+          <h1 className="text-2xl font-bold text-white drop-shadow-lg">
+            {isAr ? 'معهد صبراتة للتقنية و العلوم التطبيقية' : 'Sabratha Institute of Technical Sciences'}
+          </h1>
+          <p className="text-primary-200 mt-2 drop-shadow">
+            {isAr ? 'بوابة الدخول الموحدة' : 'Unified Portal'}
+          </p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-2xl p-8">
+        <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-8">
           <h2 className="text-xl font-bold text-gray-900 mb-6 text-center">
             {isAr ? 'تسجيل الدخول' : 'Sign In'}
           </h2>
