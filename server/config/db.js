@@ -17,17 +17,13 @@ function maskURI(uri) {
 }
 
 // Try to connect with TLS options that match our working tls.connect() test
-async function tryMongoConnect(uri) {
-  const opts = {
-    serverSelectionTimeoutMS: 30000,
-    connectTimeoutMS: 30000,
-    socketTimeoutMS: 60000,
-    family: 4,
+async function tryConnectSingle(host, port, dbName, user, pass) {
+  const singleUri = `mongodb://${user}:${pass}@${host}:${port}/${dbName}?ssl=true&authSource=admin&directConnection=true&serverSelectionTimeoutMS=15000&connectTimeoutMS=15000`
+  const client = new MongoClient(singleUri, {
     tls: true,
     tlsInsecure: true,
-    directConnection: true,
-  }
-  const client = new MongoClient(uri, opts)
+    family: 4,
+  })
   await client.connect()
   return client
 }
@@ -75,48 +71,24 @@ export async function connectDB() {
   }
   console.log('--- End ---')
 
-  // Build URIs to try
-  const urisToTry = [uri]
+  // Extract username, password, dbName from original URI
+  let userName = '', userPass = '', dbName = ''
+  try {
+    const u = new URL(uri.replace('mongodb+srv://', 'mongodb://'))
+    userName = u.username
+    userPass = u.password
+    dbName = u.pathname.replace('/', '')
+  } catch (_) {}
 
-  if (uri.startsWith('mongodb+srv://')) {
+  // Strategy 1: Try single-shard direct connection (bypasses replica set discovery)
+  for (const shard of SHARD_HOSTS) {
+    const [host, port] = shard.split(':')
     try {
-      const { resolveSrv, resolveTxt } = await import('node:dns/promises')
-      const url = new URL(uri.replace('mongodb+srv://', 'mongodb://'))
-      const srvRecords = await resolveSrv(`_mongodb._tcp.${url.hostname}`)
-      let txtRecord = ''
-      try { const r = await resolveTxt(url.hostname); txtRecord = r.flat().join('') } catch (_) {}
-      const hosts = srvRecords.map(r => `${r.name}:${r.port}`).join(',')
-      const userPass = url.username && url.password ? `${url.username}:${url.password}@` : ''
-      const dbName = url.pathname.replace('/', '')
-      const params = new URLSearchParams(url.searchParams.toString())
-      if (txtRecord) {
-        const txtParams = new URLSearchParams(txtRecord)
-        for (const [k, v] of txtParams) { if (!params.has(k)) params.set(k, v) }
-      }
-      if (!params.has('ssl')) params.set('ssl', 'true')
-      if (!params.has('authSource')) params.set('authSource', 'admin')
-      const stdUri = `mongodb://${userPass}${hosts}/${dbName}?${params.toString()}`
-      console.log(`Converted URI: ${maskURI(stdUri)}`)
-      urisToTry.unshift(stdUri)
-    } catch (err) {
-      console.warn(`SRV conversion failed: ${err.message}`)
-    }
-    const fallback = buildFallbackURI(uri)
-    if (fallback) {
-      console.log(`Fallback URI: ${maskURI(fallback)}`)
-      urisToTry.push(fallback)
-    }
-  }
-
-  // Try each URI: first with raw MongoClient, then fallback to mongoose
-  for (const tryUri of urisToTry) {
-    // Try raw MongoDB driver first (bypasses Mongoose)
-    try {
-      console.log(`Trying MongoClient with: ${maskURI(tryUri)}`)
-      const client = await tryMongoConnect(tryUri)
-      console.log('MongoClient connected!')
-      // Now initialize Mongoose using the same connection
-      await mongoose.connect(tryUri, {
+      console.log(`Trying single-shard direct: ${host}:${port}`)
+      const client = await tryConnectSingle(host, parseInt(port), dbName, userName, userPass)
+      // Success! Now connect mongoose to this single shard
+      const singleUri = `mongodb://${userName}:${userPass}@${host}:${port}/${dbName}?ssl=true&authSource=admin`
+      await mongoose.connect(singleUri, {
         serverSelectionTimeoutMS: 30000,
         connectTimeoutMS: 30000,
         socketTimeoutMS: 60000,
@@ -126,30 +98,10 @@ export async function connectDB() {
       })
       await client.close()
       isConnected = true
-      console.log('MongoDB connected (via Mongoose)')
+      console.log('MongoDB connected!')
       return
     } catch (error) {
-      console.error(`MongoClient failed with ${maskURI(tryUri)}: ${error.message}`)
-    }
-
-    // Fallback: try mongoose directly
-    try {
-      console.log(`Trying Mongoose with: ${maskURI(tryUri)}`)
-      mongoose.connection.on('connected', () => { isConnected = true; console.log('MongoDB connected') })
-      mongoose.connection.on('disconnected', () => { isConnected = false })
-      await mongoose.connect(tryUri, {
-        serverSelectionTimeoutMS: 30000,
-        connectTimeoutMS: 30000,
-        socketTimeoutMS: 60000,
-        family: 4,
-        tls: true,
-        tlsInsecure: true,
-      })
-      console.log('Mongoose connected')
-      return
-    } catch (error) {
-      console.error(`Mongoose failed with ${maskURI(tryUri)}: ${error.message}`)
-      try { await mongoose.disconnect() } catch (_) {}
+      console.error(`Single-shard ${shard} failed: ${error.message}`)
     }
   }
 
