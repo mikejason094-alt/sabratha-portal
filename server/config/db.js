@@ -1,106 +1,125 @@
 import mongoose from 'mongoose'
-import { MongoClient } from 'mongodb'
 import net from 'net'
 import tls from 'tls'
 
 let isConnected = false
+let proxyServer = null
 
 const SHARD_HOSTS = [
   'ac-o9zhfif-shard-00-00.fgrbzdr.mongodb.net:27017',
   'ac-o9zhfif-shard-00-01.fgrbzdr.mongodb.net:27017',
   'ac-o9zhfif-shard-00-02.fgrbzdr.mongodb.net:27017',
 ]
-const REPLICA_SET = 'atlas-10vmuy-shard-0'
+const ATLAS_USER = 'mikejason094_db_user'
+const ATLAS_PASS = 'PfvF5qgSRBHmMd7j'
+const ATLAS_DB = 'sabratha'
+const ATLAS_AUTH_SOURCE = 'admin'
 
 function maskURI(uri) {
   return uri.replace(/\/\/([^:]+):([^@]+)@/, '//$1:***@')
 }
 
-async function tryConnectSingle(host, port, dbName, user, pass) {
-  const singleUri = `mongodb://${user}:${pass}@${host}:${port}/${dbName}?ssl=true&tlsInsecure=true&authSource=admin&directConnection=true&serverSelectionTimeoutMS=20000&connectTimeoutMS=20000&socketTimeoutMS=30000&retryWrites=false&tlsDisableOCSPEndpointCheck=true`
-  const client = new MongoClient(singleUri)
-  await client.connect()
-  return client
-}
+// Create a TCP proxy that forwards to Atlas via our working tls.connect()
+function createAtlasProxy(targetHost, targetPort) {
+  const server = net.createServer((localSocket) => {
+    console.log(`Proxy: local client connected, connecting to ${targetHost}:${targetPort}...`)
 
-function buildFallbackURI(originalUri) {
-  try {
-    const u = new URL(originalUri.replace('mongodb+srv://', 'mongodb://'))
-    const userPass = u.username && u.password ? `${u.username}:${u.password}` : ''
-    const dbName = u.pathname.replace('/', '') || ''
-    const originalParams = u.searchParams.toString()
-    const params = new URLSearchParams(originalParams)
-    if (!params.has('ssl')) params.set('ssl', 'true')
-    if (!params.has('replicaSet')) params.set('replicaSet', REPLICA_SET)
-    if (!params.has('authSource')) params.set('authSource', 'admin')
-    if (!params.has('retryWrites')) params.set('retryWrites', 'true')
-    const auth = userPass ? `${userPass}@` : ''
-    return `mongodb://${auth}${SHARD_HOSTS.join(',')}/${dbName}?${params.toString()}`
-  } catch {
-    return null
-  }
+    // Use tls.connect() to reach Atlas (this WORKS)
+    const remoteSocket = tls.connect({
+      host: targetHost,
+      port: targetPort,
+      rejectUnauthorized: false,
+    })
+
+    remoteSocket.on('connect', () => {
+      console.log('Proxy: TLS to Atlas established, bridging connections')
+      localSocket.pipe(remoteSocket)
+      remoteSocket.pipe(localSocket)
+    })
+
+    remoteSocket.on('error', (err) => {
+      console.error(`Proxy: remote error: ${err.message}`)
+      localSocket.destroy()
+    })
+
+    remoteSocket.on('end', () => localSocket.end())
+    localSocket.on('error', () => remoteSocket.destroy())
+    localSocket.on('end', () => remoteSocket.end())
+
+    // Timeout
+    remoteSocket.setTimeout(30000)
+    remoteSocket.on('timeout', () => {
+      console.error('Proxy: remote timeout')
+      remoteSocket.destroy()
+      localSocket.destroy()
+    })
+  })
+
+  return server
 }
 
 export async function connectDB() {
-  let uri = process.env.MONGODB_URI
-  if (!uri) {
-    console.warn('MONGODB_URI not set — running without database')
-    return
-  }
-  console.log(`MONGODB_URI: ${maskURI(uri)}`)
+  // Step 1: Start local proxy to Atlas (via working TLS)
+  const targetHost = SHARD_HOSTS[0].split(':')[0]
+  const targetPort = 27017
+  const proxyPort = 27018 // local proxy port
 
-  // Network diagnostics
-  try {
-    console.log('--- Running network diagnostics ---')
-    const socket = tls.connect({ host: SHARD_HOSTS[0].split(':')[0], port: 27017, rejectUnauthorized: false })
-    await new Promise((resolve, reject) => {
-      socket.setTimeout(10000)
-      socket.on('connect', resolve)
-      socket.on('error', reject)
-      socket.on('timeout', () => reject(new Error('timeout')))
+  proxyServer = createAtlasProxy(targetHost, targetPort)
+
+  await new Promise((resolve, reject) => {
+    proxyServer.listen(proxyPort, '127.0.0.1', (err) => {
+      if (err) reject(err)
+      else resolve()
     })
-    socket.destroy()
-    console.log('Raw TLS to Atlas shard: OK')
-  } catch (e) {
-    console.log(`Raw TLS to Atlas shard: FAILED (${e.message})`)
-  }
-  console.log('--- End ---')
+  })
+  console.log(`Proxy listening on 127.0.0.1:${proxyPort} → ${targetHost}:${targetPort}`)
 
-  // Extract username, password, dbName from original URI
-  let userName = '', userPass = '', dbName = ''
+  // Step 2: Test the proxy with raw mongodb handshake
+  const testSocket = net.connect(proxyPort, '127.0.0.1', () => {
+    console.log('Proxy test: connected via localhost')
+    testSocket.end()
+  })
+  testSocket.on('error', (err) => {
+    console.error('Proxy test failed:', err.message)
+  })
+
+  // Step 3: Connect mongoose through the proxy (no TLS on driver side)
+  const proxyUri = `mongodb://${ATLAS_USER}:${ATLAS_PASS}@127.0.0.1:${proxyPort}/${ATLAS_DB}?authSource=${ATLAS_AUTH_SOURCE}&serverSelectionTimeoutMS=15000&connectTimeoutMS=15000&retryWrites=false&directConnection=true`
+
   try {
-    const u = new URL(uri.replace('mongodb+srv://', 'mongodb://'))
-    userName = u.username
-    userPass = u.password
-    dbName = u.pathname.replace('/', '')
-  } catch (_) {}
+    console.log(`Connecting Mongoose via proxy: ${maskURI(proxyUri)}`)
 
-  // Strategy 1: Try single-shard direct connection (bypasses replica set discovery)
-  for (const shard of SHARD_HOSTS) {
-    const [host, port] = shard.split(':')
+    mongoose.connection.on('connected', () => {
+      isConnected = true
+      console.log('MongoDB connected (via proxy)')
+    })
+    mongoose.connection.on('disconnected', () => { isConnected = false })
+    mongoose.connection.on('error', (err) => console.error('MongoDB error:', err.message))
+
+    await mongoose.connect(proxyUri, {
+      serverSelectionTimeoutMS: 15000,
+      connectTimeoutMS: 15000,
+      socketTimeoutMS: 60000,
+    })
+
+    console.log('Mongoose initial connection established (via proxy)')
+  } catch (error) {
+    console.error(`Mongoose via proxy failed: ${error.message}`)
+    // Fallback: try direct connect via Mongoose (proxy still running)
+    console.log('Trying direct Mongoose connection...')
     try {
-      console.log(`Trying single-shard direct: ${host}:${port}`)
-      const client = await tryConnectSingle(host, parseInt(port), dbName, userName, userPass)
-      // Success! Now connect mongoose to this single shard
-      const singleUri = `mongodb://${userName}:${userPass}@${host}:${port}/${dbName}?ssl=true&authSource=admin`
-      await mongoose.connect(singleUri, {
+      await mongoose.connect(process.env.MONGODB_URI, {
         serverSelectionTimeoutMS: 30000,
         connectTimeoutMS: 30000,
         socketTimeoutMS: 60000,
         family: 4,
-        tls: true,
-        tlsInsecure: true,
       })
-      await client.close()
       isConnected = true
-      console.log('MongoDB connected!')
-      return
-    } catch (error) {
-      console.error(`Single-shard ${shard} failed: ${error.message}`)
+      console.log('MongoDB connected directly')
+    } catch (err) {
+      console.error(`Direct Mongoose failed: ${err.message}`)
     }
   }
-
-  console.warn('All MongoDB connection attempts failed.')
 }
 
 export function getDBStatus() {
