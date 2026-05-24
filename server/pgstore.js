@@ -158,7 +158,18 @@ export default class PGStore {
 
   async seed() {
     const existing = await this.users.findOne({ email: 'islam.alhawwari@sits.edu.ly' })
-    if (existing) { console.log('DB already seeded'); return }
+    if (existing) {
+      const admin = await this.users.findOne({ email: 'admin@sits.edu.ly' })
+      if (!admin) {
+        const bcrypt = (await import('bcryptjs')).default
+        const adminPw = await bcrypt.hash('admin123', 12)
+        await this.users.insertOne({ email: 'admin@sits.edu.ly', password: adminPw, role: 'admin', nameEn: 'System Admin', nameAr: 'مدير النظام', isActive: true })
+        console.log('Admin account seeded')
+      } else {
+        console.log('DB already seeded')
+      }
+      return
+    }
 
     console.log('Seeding PostgreSQL data...')
     const bcrypt = (await import('bcryptjs')).default
