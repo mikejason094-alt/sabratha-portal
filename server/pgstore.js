@@ -93,8 +93,8 @@ class Collection {
       })
       return this
     }
-    q.then = (resolve) => resolve(this._results)
-    q.exec = async () => this._results
+    q.then = (resolve) => resolve(q._results)
+    q.exec = async () => q._results
     return q
   }
 
