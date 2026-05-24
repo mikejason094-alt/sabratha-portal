@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next'
 import { useApp } from '../context/AppContext'
 import { useData } from '../hooks/useData'
 import { semesterService } from '../services/dataService'
-import { getStatusColor, getStatusLabel } from '../utils/helpers'
+import { getStatusColor, getStatusLabel, getScoreColor } from '../utils/helpers'
 import Loading from '../components/Loading'
 
 export default function Semesters() {
@@ -52,7 +52,7 @@ export default function Semesters() {
                           <p className="text-zinc-500 text-xs">{t('semesters.credits')}</p>
                         </div>
                         <div className="text-center">
-                          <p className="font-bold text-primary-400">{sem.gpa?.toFixed(2) || '-'}</p>
+                          <p className="font-bold text-primary-400">{sem.gpa != null ? `${sem.gpa} / 100` : '-'}</p>
                           <p className="text-zinc-500 text-xs">{t('semesters.gpa')}</p>
                         </div>
                       </div>
@@ -65,7 +65,7 @@ export default function Semesters() {
                             <span key={ci} className="inline-flex items-center gap-1 px-2 py-1 bg-zinc-800 rounded text-xs text-zinc-300 border border-white/5">
                               <span className="font-mono text-zinc-500">{c.code}</span>
                               {isAr ? c.nameAr : c.nameEn}
-                              {c.grade && <span className={`font-semibold ml-1 ${c.grade.startsWith('A') ? 'text-green-400' : c.grade.startsWith('B') ? 'text-blue-400' : 'text-yellow-400'}`}>{c.grade}</span>}
+                              {c.score != null && <span className={`font-semibold ml-1 px-1 rounded ${getScoreColor(c.score)}`}>{c.score}</span>}
                             </span>
                           ))}
                         </div>

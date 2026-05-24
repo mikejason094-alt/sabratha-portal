@@ -36,7 +36,7 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <StatCard
           title={t('dashboard.currentGpa')}
-          value={student?.gpa || '-'}
+          value={student?.gpa ? `${student.gpa} / 100` : '-'}
           color="green"
           icon="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
         />

@@ -97,7 +97,7 @@ export default class MemStore {
     // Student account
     const studentPw = await bcrypt.hash('student123', 12)
     this.users.insertOne({ email: 'islam.alhawwari@sits.edu.ly', password: studentPw, role: 'student', studentId: 'STU-2024-001', isActive: true })
-    this.students.insertOne({ studentId: 'STU-2024-001', nameEn: 'Islam Almuneer Alhawwari', nameAr: 'إسلام المنير الحواري', email: 'islam.alhawwari@sits.edu.ly', department: 'Software Engineering', departmentAr: 'هندسة البرمجيات', enrollmentYear: 2024, currentSemester: 3, gpa: 3.45, totalCredits: 42 })
+    this.students.insertOne({ studentId: 'STU-2024-001', nameEn: 'Islam Almuneer Alhawwari', nameAr: 'إسلام المنير الحواري', email: 'islam.alhawwari@sits.edu.ly', department: 'Software Engineering', departmentAr: 'هندسة البرمجيات', enrollmentYear: 2024, currentSemester: 3, gpa: 86, totalCredits: 42 })
 
     // Teacher accounts
     const teacherPw = await bcrypt.hash('teacher123', 12)
@@ -120,9 +120,9 @@ export default class MemStore {
     ])
 
     this.semesters.insertMany([
-      { studentId: 'STU-2024-001', semesterNumber: 1, nameEn: 'First Semester', nameAr: 'الفصل الدراسي الأول', year: '2024', status: 'completed', gpa: 3.2, credits: 15, courses: [{ code: 'CS101', nameEn: 'Introduction to Programming', nameAr: 'مقدمة في البرمجة', credits: 3, grade: 'B+', points: 3.3 }, { code: 'MATH101', nameEn: 'Calculus I', nameAr: 'التفاضل والتكامل I', credits: 3, grade: 'A-', points: 3.7 }] },
-      { studentId: 'STU-2024-001', semesterNumber: 2, nameEn: 'Second Semester', nameAr: 'الفصل الدراسي الثاني', year: '2024', status: 'completed', gpa: 3.5, credits: 15, courses: [{ code: 'CS102', nameEn: 'Object-Oriented Programming', nameAr: 'البرمجة كائنية التوجه', credits: 3, grade: 'A', points: 4.0 }, { code: 'MATH102', nameEn: 'Calculus II', nameAr: 'التفاضل والتكامل II', credits: 3, grade: 'B+', points: 3.3 }] },
-      { studentId: 'STU-2024-001', semesterNumber: 3, nameEn: 'Third Semester', nameAr: 'الفصل الدراسي الثالث', year: '2025', status: 'in-progress', gpa: null, credits: 12, courses: [{ code: 'CS201', nameEn: 'Data Structures', nameAr: 'هياكل البيانات', credits: 3, grade: null, points: null }, { code: 'CS202', nameEn: 'Database Systems', nameAr: 'أنظمة قواعد البيانات', credits: 3, grade: null, points: null }] },
+      { studentId: 'STU-2024-001', semesterNumber: 1, nameEn: 'First Semester', nameAr: 'الفصل الدراسي الأول', year: '2024', status: 'completed', gpa: 80, credits: 15, courses: [{ code: 'CS101', nameEn: 'Introduction to Programming', nameAr: 'مقدمة في البرمجة', credits: 3, grade: 'B+', points: 3.3, score: 83 }, { code: 'MATH101', nameEn: 'Calculus I', nameAr: 'التفاضل والتكامل I', credits: 3, grade: 'A-', points: 3.7, score: 90 }] },
+      { studentId: 'STU-2024-001', semesterNumber: 2, nameEn: 'Second Semester', nameAr: 'الفصل الدراسي الثاني', year: '2024', status: 'completed', gpa: 88, credits: 15, courses: [{ code: 'CS102', nameEn: 'Object-Oriented Programming', nameAr: 'البرمجة كائنية التوجه', credits: 3, grade: 'A', points: 4.0, score: 95 }, { code: 'MATH102', nameEn: 'Calculus II', nameAr: 'التفاضل والتكامل II', credits: 3, grade: 'B+', points: 3.3, score: 83 }] },
+      { studentId: 'STU-2024-001', semesterNumber: 3, nameEn: 'Third Semester', nameAr: 'الفصل الدراسي الثالث', year: '2025', status: 'in-progress', gpa: null, credits: 12, courses: [{ code: 'CS201', nameEn: 'Data Structures', nameAr: 'هياكل البيانات', credits: 3, grade: null, points: null, score: null }, { code: 'CS202', nameEn: 'Database Systems', nameAr: 'أنظمة قواعد البيانات', credits: 3, grade: null, points: null, score: null }] },
     ])
     this.lectures.insertMany([
       { courseCode: 'CS101', courseEn: 'Introduction to Programming', courseAr: 'مقدمة في البرمجة', day: 'sunday', dayEn: 'Sunday', dayAr: 'الأحد', time: '10:00-11:30', room: 'Lab 1', instructorEn: 'Dr. Ahmed', instructorAr: 'د. أحمد', isActive: true },
@@ -148,10 +148,10 @@ export default class MemStore {
 
     // Sample course grades
     this.courseGrades.insertMany([
-      { courseId: courses[0]._id, studentId: 'STU-2024-001', semesterNumber: 1, grade: 'B+', points: 3.3, updatedBy: t1._id },
-      { courseId: courses[2]._id, studentId: 'STU-2024-001', semesterNumber: 1, grade: 'A-', points: 3.7, updatedBy: t3._id },
-      { courseId: courses[1]._id, studentId: 'STU-2024-001', semesterNumber: 2, grade: 'A', points: 4.0, updatedBy: t2._id },
-      { courseId: courses[3]._id, studentId: 'STU-2024-001', semesterNumber: 2, grade: 'B+', points: 3.3, updatedBy: t3._id },
+      { courseId: courses[0]._id, studentId: 'STU-2024-001', semesterNumber: 1, grade: 'B+', points: 3.3, score: 83, updatedBy: t1._id },
+      { courseId: courses[2]._id, studentId: 'STU-2024-001', semesterNumber: 1, grade: 'A-', points: 3.7, score: 90, updatedBy: t3._id },
+      { courseId: courses[1]._id, studentId: 'STU-2024-001', semesterNumber: 2, grade: 'A', points: 4.0, score: 95, updatedBy: t2._id },
+      { courseId: courses[3]._id, studentId: 'STU-2024-001', semesterNumber: 2, grade: 'B+', points: 3.3, score: 83, updatedBy: t3._id },
     ])
 
     console.log('MemStore seeded')

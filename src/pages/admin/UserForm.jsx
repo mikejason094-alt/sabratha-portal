@@ -165,8 +165,8 @@ export default function UserForm() {
                   className="input-field" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-zinc-400 mb-1">GPA</label>
-                <input type="number" step="0.01" min="0" max="4" value={form.gpa} onChange={e => set('gpa', e.target.value)}
+                <label className="block text-sm font-medium text-zinc-400 mb-1">GPA (0-100)</label>
+                <input type="number" step="0.1" min="0" max="100" value={form.gpa} onChange={e => set('gpa', e.target.value)}
                   className="input-field" />
               </div>
               <div>

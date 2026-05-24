@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useApp } from '../context/AppContext'
 import { useData } from '../hooks/useData'
 import { semesterService } from '../services/dataService'
-import { calculateGpa, getLetterGradeColor } from '../utils/helpers'
+import { calculateGpa, getScoreColor } from '../utils/helpers'
 import Loading from '../components/Loading'
 
 function GpaChart({ semesters }) {
@@ -11,7 +11,7 @@ function GpaChart({ semesters }) {
   const completed = semesters?.filter((s) => s.gpa != null) || []
   if (completed.length === 0) return null
 
-  const maxGpa = 4.0
+  const maxGpa = 100
   const chartHeight = 160
 
   return (
@@ -22,7 +22,7 @@ function GpaChart({ semesters }) {
           const height = (sem.gpa / maxGpa) * chartHeight
           return (
             <div key={sem.id} className="flex-1 flex flex-col items-center gap-1">
-              <span className="text-xs font-bold text-zinc-300">{sem.gpa.toFixed(2)}</span>
+              <span className="text-xs font-bold text-zinc-300">{sem.gpa.toFixed(1)}</span>
               <div className="w-full bg-primary-900/30 rounded-t relative" style={{ height: `${height}px` }}>
                 <div className="absolute bottom-0 left-0 right-0 bg-primary-500 rounded-t opacity-80" style={{ height: '100%' }} />
               </div>
@@ -44,7 +44,7 @@ export default function Grades() {
 
   if (loading) return <Loading />
 
-  const completed = semesters?.filter((s) => s.courses.some((c) => c.grade)) || []
+  const completed = semesters?.filter((s) => s.courses.some((c) => c.score != null)) || []
   const filtered = activeSem === 'all' ? completed : completed.filter((s) => s.id === parseInt(activeSem))
 
   const overallGpa = calculateGpa(completed.flatMap((s) => s.courses))
@@ -56,7 +56,7 @@ export default function Grades() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <div className="card text-center">
           <p className="text-sm text-zinc-500">{t('grades.cumulativeGpa')}</p>
-          <p className="text-3xl font-bold text-primary-400 mt-1">{student?.gpa || overallGpa}</p>
+          <p className="text-3xl font-bold text-primary-400 mt-1">{overallGpa || student?.gpa || '-'} <span className="text-sm text-zinc-500">/ 100</span></p>
         </div>
         <div className="card text-center">
           <p className="text-sm text-zinc-500">{t('grades.totalCredits')}</p>
@@ -86,7 +86,7 @@ export default function Grades() {
         <div key={sem.id} className="card mb-4">
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-semibold text-zinc-100">{isAr ? sem.nameAr : sem.nameEn} ({sem.year})</h3>
-            <span className="text-sm font-medium text-primary-400">{t('grades.gpa')}: {sem.gpa?.toFixed(2) || '-'}</span>
+            <span className="text-sm font-medium text-primary-400">{t('grades.gpa')}: {sem.gpa?.toFixed(1) || '-'}</span>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -96,7 +96,6 @@ export default function Grades() {
                   <th className="text-left py-2 px-2 text-zinc-500 font-medium">{t('grades.course')}</th>
                   <th className="text-center py-2 px-2 text-zinc-500 font-medium">{t('grades.credits')}</th>
                   <th className="text-center py-2 px-2 text-zinc-500 font-medium">{t('grades.grade')}</th>
-                  <th className="text-center py-2 px-2 text-zinc-500 font-medium">{t('grades.points')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -106,15 +105,14 @@ export default function Grades() {
                     <td className="py-2.5 px-2 font-medium text-zinc-200">{isAr ? course.nameAr : course.nameEn}</td>
                     <td className="py-2.5 px-2 text-center text-zinc-300">{course.credits}</td>
                     <td className="py-2.5 px-2 text-center">
-                      {course.grade ? (
-                        <span className={`inline-block px-2 py-0.5 rounded text-xs font-semibold ${getLetterGradeColor(course.grade)}`}>
-                          {course.grade}
+                      {course.score != null ? (
+                        <span className={`inline-block px-2 py-0.5 rounded text-xs font-semibold ${getScoreColor(course.score)}`}>
+                          {course.score}
                         </span>
                       ) : (
                         <span className="text-zinc-600">-</span>
                       )}
                     </td>
-                    <td className="py-2.5 px-2 text-center text-zinc-300">{course.points?.toFixed(2) || '-'}</td>
                   </tr>
                 ))}
               </tbody>

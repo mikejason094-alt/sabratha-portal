@@ -63,7 +63,7 @@ router.put('/courses/:courseId/grades/:studentId', async (req, res, next) => {
     const course = await store.courses.findOne({ _id: req.params.courseId, teacherId: req.user._id })
     if (!course) return res.status(404).json({ message: 'Course not found' })
 
-    const { grade, points } = req.body
+    const { grade, points, score } = req.body
     if (!grade || points === undefined) {
       return res.status(400).json({ message: 'Grade and points are required' })
     }
@@ -72,6 +72,7 @@ router.put('/courses/:courseId/grades/:studentId', async (req, res, next) => {
     if (existing) {
       existing.grade = grade
       existing.points = points
+      if (score !== undefined) existing.score = score
       existing.updatedBy = req.user._id
       await store.courseGrades.saveDoc(existing)
       res.json(existing)
@@ -81,6 +82,7 @@ router.put('/courses/:courseId/grades/:studentId', async (req, res, next) => {
         studentId: req.params.studentId,
         semesterNumber: course.semester,
         grade, points,
+        score: score != null ? score : Math.round(points * 25),
         updatedBy: req.user._id,
       })
       res.json(created)
