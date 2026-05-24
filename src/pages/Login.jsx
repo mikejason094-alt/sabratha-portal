@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../context/AuthContext'
+import { useApp } from '../context/AppContext'
 import { useNavigate } from 'react-router-dom'
 
 export default function Login() {
   const { t, i18n } = useTranslation()
+  const { lang, toggleLanguage } = useApp()
   const { login, error } = useAuth()
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
@@ -33,6 +35,14 @@ export default function Login() {
 
   return (
     <div className="min-h-screen flex relative overflow-hidden bg-zinc-950" dir={isAr ? 'rtl' : 'ltr'}>
+      {/* Language Toggle */}
+      <button onClick={toggleLanguage}
+        className="fixed top-4 right-4 z-50 flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-zinc-300 text-sm font-medium transition-all duration-200 border border-white/5 backdrop-blur-xl">
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m6 10l4 4m0 0l-4 4m4-4H3" />
+        </svg>
+        {lang === 'en' ? 'AR' : 'EN'}
+      </button>
       {/* Left: Background Image Panel */}
       <div className={`hidden lg:flex lg:w-[55%] relative items-center justify-center ${loaded ? 'animate-fade-in' : 'opacity-0'}`}>
         <div className="absolute inset-0">
