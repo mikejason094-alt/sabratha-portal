@@ -126,11 +126,11 @@ router.get('/stats', async (req, res, next) => {
 // News CRUD
 router.get('/news', async (req, res, next) => {
   try {
-    let news = await store.news.find()
-    if (req.query.category && req.query.category !== 'all') {
-      news = news.filter(a => a.category === req.query.category)
-    }
-    news.sort((a, b) => new Date(b.date) - new Date(a.date))
+    const all = (await store.news.find()) || []
+    let news = req.query.category && req.query.category !== 'all'
+      ? all.filter(a => a.category === req.query.category)
+      : all
+    news.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0))
     res.json(news)
   } catch (e) { next(e) }
 })
