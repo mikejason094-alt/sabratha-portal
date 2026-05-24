@@ -8,7 +8,7 @@ export function AppProvider({ children }) {
   const { i18n } = useTranslation()
   const { student } = useAuth()
   const [dir, setDir] = useState('ltr')
-  const [lang, setLang] = useState('en')
+  const [lang, setLang] = useState('ar')
 
   useEffect(() => {
     document.documentElement.dir = dir
@@ -16,7 +16,7 @@ export function AppProvider({ children }) {
   }, [dir, lang])
 
   const toggleLanguage = () => {
-    const newLang = lang === 'en' ? 'ar' : 'en'
+    const newLang = lang === 'ar' ? 'en' : 'ar'
     setLang(newLang)
     setDir(newLang === 'ar' ? 'rtl' : 'ltr')
     i18n.changeLanguage(newLang)
