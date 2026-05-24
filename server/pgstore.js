@@ -134,6 +134,14 @@ class Collection {
   async saveDoc(doc) {
     await this._save(doc)
   }
+
+  async updateOne(query, updates) {
+    const doc = await this.findOne(query)
+    if (!doc) return null
+    Object.assign(doc, updates, { updatedAt: new Date().toISOString() })
+    await this._save(doc)
+    return doc
+  }
 }
 
 export default class PGStore {

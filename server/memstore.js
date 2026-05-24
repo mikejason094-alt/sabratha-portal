@@ -68,6 +68,13 @@ class Collection {
     const idx = this.docs.findIndex(d => d._id === doc._id)
     if (idx >= 0) { doc.updatedAt = new Date().toISOString(); this.docs[idx] = doc }
   }
+
+  updateOne(query, updates) {
+    const idx = this.docs.findIndex(d => matchQuery(d, query))
+    if (idx < 0) return null
+    Object.assign(this.docs[idx], updates, { updatedAt: new Date().toISOString() })
+    return this.docs[idx]
+  }
 }
 
 export default class MemStore {
