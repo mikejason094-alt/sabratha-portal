@@ -9,7 +9,7 @@ export default function NewsManagement() {
   const { t } = useTranslation()
   const { lang } = useApp()
   const isAr = lang === 'ar'
-  const { data: articles, loading, setData } = useData(() => adminService.getAllNews())
+  const { data: articles, loading, error, setData } = useData(() => adminService.getAllNews())
   const [showForm, setShowForm] = useState(false)
   const [editing, setEditing] = useState(null)
   const [saving, setSaving] = useState(false)
@@ -81,6 +81,16 @@ export default function NewsManagement() {
   }
 
   if (loading) return <Loading />
+
+  if (error) {
+    return (
+      <div className="card text-center py-12">
+        <p className="text-red-400">{isAr ? 'فشل تحميل الأخبار' : 'Failed to load news'}: {error}</p>
+      </div>
+    )
+  }
+
+  const items = articles || []
 
   return (
     <div>
@@ -154,13 +164,13 @@ export default function NewsManagement() {
         </form>
       )}
 
-      {articles.length === 0 ? (
+      {items.length === 0 ? (
         <div className="card text-center py-12">
           <p className="text-zinc-500">{isAr ? 'لا توجد أخبار' : 'No news articles'}</p>
         </div>
       ) : (
         <div className="space-y-3">
-          {articles.map(a => (
+          {items.map(a => (
             <div key={a._id} className="card flex items-start justify-between gap-4">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap mb-1">
