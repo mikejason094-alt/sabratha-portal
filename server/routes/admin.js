@@ -185,4 +185,20 @@ router.delete('/news/:id', async (req, res, next) => {
   } catch (e) { next(e) }
 })
 
+// Transcript
+router.get('/transcript/:studentId', async (req, res, next) => {
+  try {
+    const student = await store.students.findOne({ studentId: req.params.studentId })
+    if (!student) return res.status(404).json({ message: 'Student not found' })
+    const semesters = await store.semesters.find({ studentId: req.params.studentId }).sort({ semesterNumber: 1 })
+    const user = await store.users.findOne({ studentId: req.params.studentId })
+    const allCourses = semesters.flatMap(s => s.courses || [])
+    const graded = allCourses.filter(c => c.score != null)
+    const totalPoints = graded.reduce((sum, c) => sum + c.score * c.credits, 0)
+    const totalCredits = graded.reduce((sum, c) => sum + c.credits, 0)
+    const overallGpa = totalCredits > 0 ? Math.round((totalPoints / totalCredits) * 100) / 100 : null
+    res.json({ student, semesters, user, overallGpa })
+  } catch (e) { next(e) }
+})
+
 export default router

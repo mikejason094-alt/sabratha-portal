@@ -70,4 +70,5 @@ export const adminService = {
   createNews: (data) => api.post('/admin/news', data),
   updateNews: (id, data) => api.put(`/admin/news/${id}`, data),
   deleteNews: (id) => api.delete(`/admin/news/${id}`),
+  getTranscript: (studentId) => api.get(`/admin/transcript/${studentId}`),
 }

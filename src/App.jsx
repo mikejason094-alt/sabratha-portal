@@ -15,6 +15,7 @@ import AdminDashboard from './pages/admin/AdminDashboard'
 import UserManagement from './pages/admin/UserManagement'
 import UserForm from './pages/admin/UserForm'
 import NewsManagement from './pages/admin/NewsManagement'
+import Transcript from './pages/admin/Transcript'
 import Loading from './components/Loading'
 
 function ProtectedRoute({ children }) {
@@ -58,6 +59,7 @@ function AdminRoutes() {
       <Route path="/admin/users/new" element={<UserForm />} />
       <Route path="/admin/users/:id/edit" element={<UserForm />} />
       <Route path="/admin/news" element={<NewsManagement />} />
+      <Route path="/admin/transcript" element={<Transcript />} />
       <Route path="*" element={<Navigate to="/admin" replace />} />
     </Routes>
   )
