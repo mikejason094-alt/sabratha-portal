@@ -54,3 +54,16 @@ export const authService = {
   login: (email, password) => api.post('/auth/login', { email, password }),
   getMe: () => api.get('/auth/me'),
 }
+
+export const adminService = {
+  getStats: () => api.get('/admin/stats'),
+  getUsers: () => api.get('/admin/users'),
+  getUser: async (id) => {
+    const users = await api.get('/admin/users')
+    return users.find(u => u._id === id) || null
+  },
+  createUser: (data) => api.post('/admin/users', data),
+  updateUser: (id, data) => api.put(`/admin/users/${id}`, data),
+  resetPassword: (id) => api.put(`/admin/users/${id}/reset-password`),
+  deleteUser: (id) => api.delete(`/admin/users/${id}`),
+}

@@ -11,6 +11,9 @@ import Semesters from './pages/Semesters'
 import News from './pages/News'
 import TeacherDashboard from './pages/teacher/TeacherDashboard'
 import TeacherCourseDetail from './pages/teacher/TeacherCourseDetail'
+import AdminDashboard from './pages/admin/AdminDashboard'
+import UserManagement from './pages/admin/UserManagement'
+import UserForm from './pages/admin/UserForm'
 import Loading from './components/Loading'
 
 function ProtectedRoute({ children }) {
@@ -46,6 +49,18 @@ function TeacherRoutes() {
   )
 }
 
+function AdminRoutes() {
+  return (
+    <Routes>
+      <Route path="/admin" element={<AdminDashboard />} />
+      <Route path="/admin/users" element={<UserManagement />} />
+      <Route path="/admin/users/new" element={<UserForm />} />
+      <Route path="/admin/users/:id/edit" element={<UserForm />} />
+      <Route path="*" element={<Navigate to="/admin" replace />} />
+    </Routes>
+  )
+}
+
 function AppRoutes() {
   const { isAuthenticated, loading, user } = useAuth()
 
@@ -61,6 +76,15 @@ function AppRoutes() {
   }
 
   const isTeacher = user?.role === 'teacher'
+  const isAdmin = user?.role === 'admin'
+
+  if (isAdmin) {
+    return (
+      <Layout>
+        <AdminRoutes />
+      </Layout>
+    )
+  }
 
   return (
     <Layout>

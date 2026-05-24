@@ -164,7 +164,9 @@ export default class PGStore {
     const bcrypt = (await import('bcryptjs')).default
     const studentPw = await bcrypt.hash('student123', 12)
     const teacherPw = await bcrypt.hash('teacher123', 12)
+    const adminPw = await bcrypt.hash('admin123', 12)
 
+    await this.users.insertOne({ email: 'admin@sits.edu.ly', password: adminPw, role: 'admin', nameEn: 'System Admin', nameAr: 'مدير النظام', isActive: true })
     await this.users.insertOne({ email: 'islam.alhawwari@sits.edu.ly', password: studentPw, role: 'student', studentId: 'STU-2024-001', isActive: true })
     await this.students.insertOne({ studentId: 'STU-2024-001', nameEn: 'Islam Almuneer Alhawwari', nameAr: 'إسلام المنير الحواري', email: 'islam.alhawwari@sits.edu.ly', department: 'Software Engineering', departmentAr: 'هندسة البرمجيات', enrollmentYear: 2024, currentSemester: 3, gpa: 3.45, totalCredits: 42 })
 

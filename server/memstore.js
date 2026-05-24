@@ -90,6 +90,10 @@ export default class MemStore {
     if (this.users.findOne({ email: 'islam.alhawwari@sits.edu.ly' })) { console.log('MemStore already seeded'); return }
     console.log('Seeding memory store...')
 
+    // Admin account
+    const adminPw = await bcrypt.hash('admin123', 12)
+    this.users.insertOne({ email: 'admin@sits.edu.ly', password: adminPw, role: 'admin', nameEn: 'System Admin', nameAr: 'مدير النظام', isActive: true })
+
     // Student account
     const studentPw = await bcrypt.hash('student123', 12)
     this.users.insertOne({ email: 'islam.alhawwari@sits.edu.ly', password: studentPw, role: 'student', studentId: 'STU-2024-001', isActive: true })
