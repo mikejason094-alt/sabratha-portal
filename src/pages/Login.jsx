@@ -65,10 +65,10 @@ export default function Login() {
               alt="SITS Logo"
               className="w-36 h-36 mx-auto mb-8 drop-shadow-2xl brightness-110"
             />
-            <h1 className="text-4xl lg:text-5xl font-bold text-white leading-tight drop-shadow-2xl">
+            <h1 className="text-4xl lg:text-5xl font-bold text-white leading-relaxed drop-shadow-2xl">
               {isAr ? 'المعهد العالي للعلوم\nوالتقنية - صبراتة' : 'Higher Institute of\nSciences and Technology'}
             </h1>
-            <p className="text-xl text-zinc-300 mt-4 font-light tracking-wide">
+            <p className="text-xl text-zinc-300 mt-6 font-light tracking-wide">
               {isAr ? 'حيث يلتقي التراث بالابتكار' : 'Where Heritage Meets Innovation'}
             </p>
             <div className="mt-12 flex items-center justify-center gap-3 text-zinc-500 text-sm">
