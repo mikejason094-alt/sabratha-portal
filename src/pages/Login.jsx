@@ -156,27 +156,6 @@ export default function Login() {
                 ) : isAr ? 'تسجيل الدخول' : 'Sign In'}
               </button>
             </form>
-
-            <div className="mt-8 pt-6 border-t border-white/5 space-y-2">
-              <p className="text-xs text-zinc-600 text-center font-medium tracking-wider uppercase">
-                {isAr ? 'بيانات الدخول التجريبية' : 'Demo Credentials'}
-              </p>
-              <div className="text-xs text-zinc-500 text-center space-y-1.5 bg-white/[0.02] rounded-xl px-4 py-3">
-                <p>
-                  <span className="text-zinc-400 font-medium">{isAr ? 'طالب:' : 'Student:'}</span>
-                  <span className="text-zinc-500"> islam.alhawwari@sits.edu.ly / student123</span>
-                </p>
-                <p>
-                  <span className="text-zinc-400 font-medium">{isAr ? 'مدرس:' : 'Teacher:'}</span>
-                  <span className="text-zinc-500"> ahmed.hassan@sits.edu.ly / teacher123</span>
-                </p>
-                <p>
-                  <span className="text-zinc-400 font-medium">{isAr ? 'مشرف:' : 'Admin:'}</span>
-                  <span className="text-zinc-500"> admin@sits.edu.ly / admin123</span>
-                </p>
-                <p className="text-zinc-600">sara.ali · khalid.omar · mohamed.ali · omar.hassan / teacher123</p>
-              </div>
-            </div>
           </div>
 
           {/* Footer */}
