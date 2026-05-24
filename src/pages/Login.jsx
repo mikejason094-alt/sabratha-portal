@@ -36,13 +36,17 @@ export default function Login() {
   return (
     <div className="min-h-screen flex relative overflow-hidden bg-zinc-950" dir={isAr ? 'rtl' : 'ltr'}>
       {/* Language Toggle */}
-      <button onClick={toggleLanguage}
-        className="fixed top-4 right-4 z-50 flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-zinc-300 text-sm font-medium transition-all duration-200 border border-white/5 backdrop-blur-xl">
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m6 10l4 4m0 0l-4 4m4-4H3" />
-        </svg>
-        {lang === 'en' ? 'AR' : 'EN'}
-      </button>
+      <div className="fixed top-5 right-5 z-50">
+        <button onClick={toggleLanguage}
+          className="group flex items-center gap-2.5 px-4 py-2 rounded-2xl bg-zinc-900/70 backdrop-blur-xl border border-white/10 hover:border-primary-500/40 text-zinc-400 hover:text-primary-300 text-sm font-medium transition-all duration-300 shadow-lg shadow-black/20 hover:shadow-primary-500/10 hover:bg-zinc-900/90">
+          <svg className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span className="tracking-wider text-xs font-semibold uppercase">{lang === 'en' ? 'العربية' : 'English'}</span>
+          <span className="h-3 w-px bg-white/10" />
+          <span className="text-xs font-bold text-primary-400 group-hover:text-primary-300 transition-colors">{lang === 'en' ? 'AR' : 'EN'}</span>
+        </button>
+      </div>
       {/* Left: Background Image Panel */}
       <div className={`hidden lg:flex lg:w-[55%] relative items-center justify-center ${loaded ? 'animate-fade-in' : 'opacity-0'}`}>
         <div className="absolute inset-0">
