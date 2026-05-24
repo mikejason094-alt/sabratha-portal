@@ -123,4 +123,66 @@ router.get('/stats', async (req, res, next) => {
   } catch (e) { next(e) }
 })
 
+// News CRUD
+router.get('/news', async (req, res, next) => {
+  try {
+    let news = await store.news.find()
+    if (req.query.category && req.query.category !== 'all') {
+      news = news.filter(a => a.category === req.query.category)
+    }
+    news.sort((a, b) => new Date(b.date) - new Date(a.date))
+    res.json(news)
+  } catch (e) { next(e) }
+})
+
+router.post('/news', async (req, res, next) => {
+  try {
+    const { titleEn, titleAr, summaryEn, summaryAr, contentEn, contentAr, category, date, image, author } = req.body
+    if (!titleEn) return res.status(400).json({ message: 'Title is required' })
+    const article = await store.news.insertOne({
+      titleEn, titleAr: titleAr || titleEn,
+      summaryEn: summaryEn || '', summaryAr: summaryAr || '',
+      contentEn: contentEn || '', contentAr: contentAr || '',
+      category: category || 'announcement',
+      date: date || new Date().toISOString(),
+      image: image || null,
+      author: author || 'Admin',
+      isPublished: true,
+    })
+    res.status(201).json(article)
+  } catch (e) { next(e) }
+})
+
+router.put('/news/:id', async (req, res, next) => {
+  try {
+    const existing = await store.news.findOne({ _id: req.params.id })
+    if (!existing) return res.status(404).json({ message: 'News not found' })
+    const { titleEn, titleAr, summaryEn, summaryAr, contentEn, contentAr, category, date, image, author, isPublished } = req.body
+    const updates = {}
+    if (titleEn !== undefined) updates.titleEn = titleEn
+    if (titleAr !== undefined) updates.titleAr = titleAr
+    if (summaryEn !== undefined) updates.summaryEn = summaryEn
+    if (summaryAr !== undefined) updates.summaryAr = summaryAr
+    if (contentEn !== undefined) updates.contentEn = contentEn
+    if (contentAr !== undefined) updates.contentAr = contentAr
+    if (category !== undefined) updates.category = category
+    if (date !== undefined) updates.date = date
+    if (image !== undefined) updates.image = image
+    if (author !== undefined) updates.author = author
+    if (isPublished !== undefined) updates.isPublished = isPublished
+    await store.news.updateOne({ _id: req.params.id }, updates)
+    const updated = await store.news.findOne({ _id: req.params.id })
+    res.json(updated)
+  } catch (e) { next(e) }
+})
+
+router.delete('/news/:id', async (req, res, next) => {
+  try {
+    const existing = await store.news.findOne({ _id: req.params.id })
+    if (!existing) return res.status(404).json({ message: 'News not found' })
+    await store.news.deleteOne({ _id: req.params.id })
+    res.json({ message: 'News deleted' })
+  } catch (e) { next(e) }
+})
+
 export default router

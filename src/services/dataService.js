@@ -66,4 +66,8 @@ export const adminService = {
   updateUser: (id, data) => api.put(`/admin/users/${id}`, data),
   resetPassword: (id) => api.put(`/admin/users/${id}/reset-password`),
   deleteUser: (id) => api.delete(`/admin/users/${id}`),
+  getAllNews: () => api.get('/admin/news'),
+  createNews: (data) => api.post('/admin/news', data),
+  updateNews: (id, data) => api.put(`/admin/news/${id}`, data),
+  deleteNews: (id) => api.delete(`/admin/news/${id}`),
 }
