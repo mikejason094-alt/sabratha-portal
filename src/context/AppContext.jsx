@@ -1,29 +1,18 @@
-import { createContext, useContext, useState, useEffect } from 'react'
-import { useTranslation } from 'react-i18next'
+import { createContext, useContext, useEffect } from 'react'
 import { useAuth } from './AuthContext'
 
 const AppContext = createContext()
 
 export function AppProvider({ children }) {
-  const { i18n } = useTranslation()
   const { student } = useAuth()
-  const [dir, setDir] = useState('ltr')
-  const [lang, setLang] = useState('ar')
 
   useEffect(() => {
-    document.documentElement.dir = dir
-    document.documentElement.lang = lang
-  }, [dir, lang])
-
-  const toggleLanguage = () => {
-    const newLang = lang === 'ar' ? 'en' : 'ar'
-    setLang(newLang)
-    setDir(newLang === 'ar' ? 'rtl' : 'ltr')
-    i18n.changeLanguage(newLang)
-  }
+    document.documentElement.dir = 'rtl'
+    document.documentElement.lang = 'ar'
+  }, [])
 
   return (
-    <AppContext.Provider value={{ student, lang, dir, toggleLanguage }}>
+    <AppContext.Provider value={{ student }}>
       {children}
     </AppContext.Provider>
   )

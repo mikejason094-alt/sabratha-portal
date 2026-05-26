@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation, Link, useNavigate } from 'react-router-dom'
-import { useApp } from '../context/AppContext'
 import { useAuth } from '../context/AuthContext'
 
 const studentNav = [
@@ -29,7 +28,6 @@ export default function Layout({ children }) {
   const { t } = useTranslation()
   const location = useLocation()
   const navigate = useNavigate()
-  const { lang, toggleLanguage, dir } = useApp()
   const { user, student, logout } = useAuth()
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
@@ -37,12 +35,12 @@ export default function Layout({ children }) {
   const isAdmin = user?.role === 'admin'
   const navItems = isAdmin ? adminNav : (isTeacher ? teacherNav : studentNav)
 
-  const userTitle = isAdmin ? (lang === 'ar' ? 'لوحة الإدارة' : 'Admin Portal')
-    : isTeacher ? (lang === 'ar' ? 'بوابة المدرس' : 'Teacher Portal')
+  const userTitle = isAdmin ? 'لوحة الإدارة'
+    : isTeacher ? 'بوابة المدرس'
     : t('header.studentPortal')
 
   return (
-    <div className="min-h-screen flex flex-col bg-zinc-950 text-zinc-100" dir={dir}>
+    <div className="min-h-screen flex flex-col bg-zinc-950 text-zinc-100" dir="rtl">
       {/* Header */}
       <header className="bg-zinc-900/80 backdrop-blur-xl border-b border-white/5 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4">
@@ -54,7 +52,7 @@ export default function Layout({ children }) {
                 </svg>
               </button>
               <div className="w-9 h-9 bg-accent-500 rounded-xl flex items-center justify-center font-bold text-zinc-950 text-base shadow-lg shadow-accent-500/20">
-                {lang === 'ar' ? 'م' : 'S'}
+                م
               </div>
               <div className="hidden sm:block">
                 <h1 className="font-bold text-base leading-tight text-zinc-100">{t('header.instituteShort')}</h1>
@@ -63,12 +61,6 @@ export default function Layout({ children }) {
             </div>
 
             <div className="flex items-center gap-3">
-              <button onClick={toggleLanguage} className="group flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-900/70 border border-white/10 hover:border-primary-500/40 text-zinc-400 hover:text-primary-300 text-sm font-medium transition-all duration-300 hover:shadow-primary-500/10">
-                <svg className="w-3.5 h-3.5 transition-transform duration-300 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span className="text-xs font-bold tracking-wider uppercase">{lang === 'en' ? 'AR' : 'EN'}</span>
-              </button>
               <button onClick={() => { logout(); navigate('/login') }} className="p-2 rounded-xl hover:bg-white/5 transition-colors text-zinc-500 hover:text-zinc-300" title="Logout">
                 <svg className="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{width:18,height:18}}>
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -77,14 +69,10 @@ export default function Layout({ children }) {
               {user && (
                 <div className="flex items-center gap-2.5">
                   <div className="w-8 h-8 rounded-xl bg-primary-500/20 text-primary-300 flex items-center justify-center text-xs font-bold ring-2 ring-primary-500/30">
-                    {lang === 'ar'
-                      ? (student?.nameAr || user?.nameAr || '?').charAt(0)
-                      : (student?.nameEn || user?.nameEn || '?').charAt(0)}
+                    {(student?.nameAr || user?.nameAr || '?').charAt(0)}
                   </div>
                   <span className="hidden md:block text-sm font-medium text-zinc-300 max-w-[120px] truncate">
-                    {lang === 'ar'
-                      ? (student?.nameAr || user?.nameAr || '')
-                      : (student?.nameEn || user?.nameEn || '')}
+                    {student?.nameAr || user?.nameAr || ''}
                   </span>
                 </div>
               )}
@@ -118,7 +106,7 @@ export default function Layout({ children }) {
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                 </svg>
-                <span>{lang === 'ar' ? 'تسجيل الخروج' : 'Sign Out'}</span>
+                <span>تسجيل الخروج</span>
               </button>
             </div>
           </nav>
