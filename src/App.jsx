@@ -86,17 +86,11 @@ function AppRoutes() {
   const isTeacher = user?.role === 'teacher'
   const isAdmin = user?.role === 'admin'
 
-  if (isAdmin) {
-    return (
-      <Layout>
-        <AdminRoutes />
-      </Layout>
-    )
-  }
-
   return (
     <Layout>
-      {isTeacher ? <TeacherRoutes /> : <StudentRoutes />}
+      <Suspense fallback={<Loading />}>
+        {isAdmin ? <AdminRoutes /> : (isTeacher ? <TeacherRoutes /> : <StudentRoutes />)}
+      </Suspense>
     </Layout>
   )
 }
