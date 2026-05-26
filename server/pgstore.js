@@ -167,7 +167,6 @@ export default class PGStore {
   async seed() {
     const bcrypt = (await import('bcryptjs')).default
 
-    // Ensure admin exists
     const adminUser = await this.users.findOne({ email: 'admin@sits.edu.ly' })
     if (!adminUser) {
       console.log('Seeding admin account...')
@@ -175,32 +174,6 @@ export default class PGStore {
       await this.users.insertOne({ email: 'admin@sits.edu.ly', password: adminPw, role: 'admin', nameEn: 'System Admin', nameAr: 'مدير النظام', isActive: true })
       console.log('Admin seeded')
     }
-
-    // Clean up any old seed data (non-admin users + all non-user collections)
-    console.log('Cleaning up old seed data...')
-    // Collect all non-user collection names
-    const nonUserCollections = ['students', 'semesters', 'courses', 'lectures', 'news', 'enrollments', 'lectureRegistrations', 'exams', 'courseGrades']
-
-    // Remove non-admin users
-    const allUsers = await this.users.find({})
-    for (const u of allUsers) {
-      if (u.email !== 'admin@sits.edu.ly') {
-        await this.users.deleteOne({ _id: u._id })
-      }
-    }
-
-    // Clean all non-user collections
-    for (const colName of nonUserCollections) {
-      const col = this[colName]
-      if (col) {
-        const docs = await col.find({})
-        for (const d of docs) {
-          await col.deleteOne({ _id: d._id })
-        }
-      }
-    }
-
-    console.log('Cleanup complete. Only admin remains.')
   }
 }
 

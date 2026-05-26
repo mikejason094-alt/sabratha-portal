@@ -101,28 +101,5 @@ export default class MemStore {
       this.users.insertOne({ email: 'admin@sits.edu.ly', password: adminPw, role: 'admin', nameEn: 'System Admin', nameAr: 'مدير النظام', isActive: true })
       console.log('Admin seeded')
     }
-
-    // Clean up any old seed data
-    console.log('Cleaning up old seed data...')
-    const nonUserCollections = ['students', 'semesters', 'courses', 'lectures', 'news', 'enrollments', 'lectureRegistrations', 'exams', 'courseGrades']
-
-    const allUsers = this.users.find({})
-    for (const u of allUsers) {
-      if (u.email !== 'admin@sits.edu.ly') {
-        this.users.deleteOne({ _id: u._id })
-      }
-    }
-
-    for (const colName of nonUserCollections) {
-      const col = this[colName]
-      if (col) {
-        const docs = col.find({})
-        for (const d of docs) {
-          col.deleteOne({ _id: d._id })
-        }
-      }
-    }
-
-    console.log('Cleanup complete. Only admin remains.')
   }
 }
