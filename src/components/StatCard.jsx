@@ -1,4 +1,6 @@
-export default function StatCard({ title, value, subtitle, color = 'primary', icon }) {
+import { memo } from 'react'
+
+const StatCard = memo(function StatCard({ title, value, subtitle, color = 'primary', icon }) {
   const colorMap = {
     primary: 'bg-primary-500/20 text-primary-300',
     green: 'bg-green-500/20 text-green-400',
@@ -23,4 +25,6 @@ export default function StatCard({ title, value, subtitle, color = 'primary', ic
       </div>
     </div>
   )
-}
+})
+
+export default StatCard

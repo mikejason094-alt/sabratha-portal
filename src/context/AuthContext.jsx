@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useCallback } from 'react'
+import { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react'
 import { api, setToken, getStoredToken } from '../services/api'
 
 const AuthContext = createContext()
@@ -46,8 +46,10 @@ export function AuthProvider({ children }) {
     setStudent(null)
   }, [])
 
+  const value = useMemo(() => ({ user, student, loading, error, login, logout, isAuthenticated: !!user }), [user, student, loading, error, login, logout])
+
   return (
-    <AuthContext.Provider value={{ user, student, loading, error, login, logout, isAuthenticated: !!user }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   )

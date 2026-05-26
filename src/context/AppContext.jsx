@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect } from 'react'
+import { createContext, useContext, useEffect, useMemo } from 'react'
 import { useAuth } from './AuthContext'
 
 const AppContext = createContext()
@@ -11,8 +11,10 @@ export function AppProvider({ children }) {
     document.documentElement.lang = 'ar'
   }, [])
 
+  const value = useMemo(() => ({ student }), [student])
+
   return (
-    <AppContext.Provider value={{ student }}>
+    <AppContext.Provider value={value}>
       {children}
     </AppContext.Provider>
   )

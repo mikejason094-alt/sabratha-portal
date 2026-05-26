@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation, Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
@@ -33,7 +33,7 @@ export default function Layout({ children }) {
 
   const isTeacher = user?.role === 'teacher'
   const isAdmin = user?.role === 'admin'
-  const navItems = isAdmin ? adminNav : (isTeacher ? teacherNav : studentNav)
+  const navItems = useMemo(() => isAdmin ? adminNav : (isTeacher ? teacherNav : studentNav), [isAdmin, isTeacher])
 
   const userTitle = isAdmin ? 'لوحة الإدارة'
     : isTeacher ? 'بوابة المدرس'

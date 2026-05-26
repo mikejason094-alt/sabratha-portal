@@ -1,22 +1,24 @@
+import { lazy, Suspense } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { AppProvider } from './context/AppContext'
 import Layout from './components/Layout'
-import Login from './pages/Login'
-import Dashboard from './pages/Dashboard'
-import Grades from './pages/Grades'
-import Courses from './pages/Courses'
-import Lectures from './pages/Lectures'
-import Semesters from './pages/Semesters'
-import News from './pages/News'
-import TeacherDashboard from './pages/teacher/TeacherDashboard'
-import TeacherCourseDetail from './pages/teacher/TeacherCourseDetail'
-import AdminDashboard from './pages/admin/AdminDashboard'
-import UserManagement from './pages/admin/UserManagement'
-import UserForm from './pages/admin/UserForm'
-import NewsManagement from './pages/admin/NewsManagement'
-import Transcript from './pages/admin/Transcript'
 import Loading from './components/Loading'
+
+const Login = lazy(() => import('./pages/Login'))
+const Dashboard = lazy(() => import('./pages/Dashboard'))
+const Grades = lazy(() => import('./pages/Grades'))
+const Courses = lazy(() => import('./pages/Courses'))
+const Lectures = lazy(() => import('./pages/Lectures'))
+const Semesters = lazy(() => import('./pages/Semesters'))
+const News = lazy(() => import('./pages/News'))
+const TeacherDashboard = lazy(() => import('./pages/teacher/TeacherDashboard'))
+const TeacherCourseDetail = lazy(() => import('./pages/teacher/TeacherCourseDetail'))
+const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'))
+const UserManagement = lazy(() => import('./pages/admin/UserManagement'))
+const UserForm = lazy(() => import('./pages/admin/UserForm'))
+const NewsManagement = lazy(() => import('./pages/admin/NewsManagement'))
+const Transcript = lazy(() => import('./pages/admin/Transcript'))
 
 function ProtectedRoute({ children }) {
   const { isAuthenticated, loading } = useAuth()
@@ -72,10 +74,12 @@ function AppRoutes() {
 
   if (!isAuthenticated) {
     return (
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="*" element={<Navigate to="/login" replace />} />
-      </Routes>
+      <Suspense fallback={<Loading />}>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="*" element={<Navigate to="/login" replace />} />
+        </Routes>
+      </Suspense>
     )
   }
 
